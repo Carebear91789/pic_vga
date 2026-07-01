@@ -1,7 +1,7 @@
 
 
 Microchip MPLAB XC8 Assembler V3.10 build 20250813170317 
-                                                                                                           Wed Jul  1 18:47:44 2026
+                                                                                                           Wed Jul  1 19:07:37 2026
 
 
      1                           	processor	16F15244
@@ -5324,681 +5324,682 @@ Microchip MPLAB XC8 Assembler V3.10 build 20250813170317
   5318                           ;Number of displayed lines = inner * outer
   5319     0002                     INNER_LOOPS     equ	2
   5320     0002                     OUTER_LOOPS     equ	2
-  5321     000B                     V_FRONT_PORCH   equ	11
+  5321     0005                     V_FRONT_PORCH   equ	5
   5322     0002                     V_SYNC_PULSE    equ	2
   5323     001F                     V_BACK_PORCH    equ	31
   5324     0020                     ARRAY_ADDR      equ	32
   5325                           
   5326                           	psect	mainCode
-  5327     059C                     _drawLine:
-  5328     059C  0141               	movlb	1	;Select bank 1
-  5329     059D  3002               	movlw	2
-  5330     059E  00A0               	movwf	linecount_outer& (0+127)	; outer counter (2 passes)
-  5331     059F  3002               	movlw	2
-  5332     05A0  00A1               	movwf	linecount_inner& (0+127)	; inner counter (240 lines each)
-  5333     05A1  01A2               	clrf	v_counter& (0+127)
-  5334     05A2  01A3               	clrf	v_state& (0+127)
-  5335     05A3  0140               	movlb	0	;Select bank 0
-  5336     05A4                     frame:
-  5337     05A4                     line_loop:
-  5338                           
-  5339                           ;------------- 4 Instruction front porch (16 pixel clocks) ------------
-  5340 ;; 3 instructions from MOVWF and GOTO at EOL
-  5341     05A4  3020               	movlw	32
-  5342                           
-  5343                           ;------------- 24 Instruction sync pulse (96 pixel clocks) ------------
-  5344     05A5  131A               	bcf	26,6
-  5345     05A6  0141               	movlb	1	;Select bank 1
-  5346     05A7  1BA2               	btfsc	v_counter& (0+127),7	;Skip next instruction (NOP) if bit 7 is zero
-  5347     05A8  2E72               	goto	vblank
-  5348     05A9  0140               	movlb	0	;Select bank 0
-  5349     05AA  0000               	nop
-  5350     05AB  0000               	nop
-  5351     05AC  0000               	nop
-  5352     05AD  0000               	nop
-  5353     05AE  0086               	movwf	6
-  5354     05AF  0187               	clrf	7
-  5355     05B0  0141               	movlb	1	;Select bank 1
-  5356     05B1  0BA1               	decfsz	linecount_inner& (0+127),f	;Decrement linecount and store in linecount, skip next instructio
+  5327     059B                     _drawLine:
+  5328     059B  0141               	movlb	1	;Select bank 1
+  5329     059C  3002               	movlw	2
+  5330     059D  00A0               	movwf	linecount_outer& (0+127)	; outer counter (2 passes)
+  5331     059E  3002               	movlw	2
+  5332     059F  00A1               	movwf	linecount_inner& (0+127)	; inner counter (240 lines each)
+  5333     05A0  01A2               	clrf	v_counter& (0+127)
+  5334     05A1  01A3               	clrf	v_state& (0+127)
+  5335     05A2  0140               	movlb	0	;Select bank 0
+  5336     05A3  0187               	clrf	7
+  5337     05A4                     frame:
+  5338     05A4                     line_loop:
+  5339                           
+  5340                           ;------------- 4 Instruction front porch (16 pixel clocks) ------------
+  5341 ;; 3 instructions from MOVWF and GOTO at EOL
+  5342     05A4  3020               	movlw	32
+  5343                           
+  5344                           ;------------- 24 Instruction sync pulse (96 pixel clocks) ------------
+  5345     05A5  131A               	bcf	26,6
+  5346     05A6  0141               	movlb	1	;Select bank 1
+  5347     05A7  1BA2               	btfsc	v_counter& (0+127),7	;Skip next instruction (NOP) if bit 7 is zero
+  5348     05A8  2E72               	goto	vblank
+  5349     05A9  0140               	movlb	0	;Select bank 0
+  5350     05AA  0000               	nop
+  5351     05AB  0000               	nop
+  5352     05AC  0000               	nop
+  5353     05AD  0000               	nop
+  5354     05AE  0000               	nop
+  5355     05AF  0086               	movwf	6
+  5356     05B0  0141               	movlb	1	;Select bank 1
+  5357     05B1  0BA1               	decfsz	linecount_inner& (0+127),f	;Decrement linecount and store in linecount, skip next instructio
       +                          n if zero
-  5357     05B2  2DBB               	goto	long_continue_sync	;Continue sync pulse if linecount not zero
-  5358                           
-  5359                           ;If inner linecount is zero
-  5360     05B3  3002               	movlw	2
-  5361     05B4  00A1               	movwf	linecount_inner& (0+127)
-  5362     05B5  0BA0               	decfsz	linecount_outer& (0+127),f	;If second time counting down from 240
-  5363     05B6  2DBF               	goto	short_continue_sync
-  5364                           
-  5365                           ;If outer linecount is zero
-  5366     05B7  3002               	movlw	2
-  5367     05B8  00A0               	movwf	linecount_outer& (0+127)
-  5368     05B9  17A2               	bsf	v_counter& (0+127),7
-  5369     05BA  2DC3               	goto	shorter_continue_sync
-  5370     05BB                     long_continue_sync:	
-  5371                           ;GOTO vblank
-  5372                           
+  5358     05B2  2DBB               	goto	long_continue_sync	;Continue sync pulse if linecount not zero
+  5359                           
+  5360                           ;If inner linecount is zero
+  5361     05B3  3002               	movlw	2
+  5362     05B4  00A1               	movwf	linecount_inner& (0+127)
+  5363     05B5  0BA0               	decfsz	linecount_outer& (0+127),f	;If second time counting down from 240
+  5364     05B6  2DBF               	goto	short_continue_sync
+  5365                           
+  5366                           ;If outer linecount is zero
+  5367     05B7  3002               	movlw	2
+  5368     05B8  00A0               	movwf	linecount_outer& (0+127)
+  5369     05B9  17A2               	bsf	v_counter& (0+127),7
+  5370     05BA  2DC3               	goto	shorter_continue_sync
+  5371     05BB                     long_continue_sync:	
+  5372                           ;GOTO vblank
   5373                           
-  5374                           ;After 15 cycles
-  5375     05BB  0000               	nop
-  5376     05BC  0000               	nop
-  5377     05BD  0000               	nop
-  5378     05BE  0000               	nop
-  5379     05BF                     short_continue_sync:
-  5380                           
-  5381                           ;After 19 cycles
-  5382     05BF  0000               	nop
-  5383     05C0  0000               	nop
-  5384     05C1  0000               	nop
-  5385     05C2  0000               	nop
-  5386     05C3                     shorter_continue_sync:
-  5387                           
-  5388                           ;After 23 cycles
-  5389     05C3  0140               	movlb	0	;Select bank 0
-  5390                           
-  5391                           ;------------- 12 Instruction back porch (48 pixel clocks) ------------
-  5392     05C4  171A               	bsf	26,6
-  5393     05C5  0000               	nop
-  5394     05C6  0000               	nop
-  5395     05C7  0000               	nop
-  5396     05C8  0000               	nop
-  5397     05C9  0000               	nop
-  5398     05CA  0000               	nop
-  5399     05CB  0000               	nop
-  5400     05CC  0000               	nop
-  5401     05CD  0000               	nop
-  5402     05CE  0000               	nop
-  5403     05CF  0016               	moviw fsr1++
-  5404                           
-  5405                           ;------------- Output 80 pixels with 160 instructions (640 pixel clocks) ------------
-  5406     05D0  009A               	movwf	26
-  5407     05D1  0016               	moviw fsr1++
-  5408     05D2  009A               	movwf	26
-  5409     05D3  0016               	moviw fsr1++
-  5410     05D4  009A               	movwf	26
-  5411     05D5  0016               	moviw fsr1++
-  5412     05D6  009A               	movwf	26
-  5413     05D7  0016               	moviw fsr1++
-  5414     05D8  009A               	movwf	26
-  5415     05D9  0016               	moviw fsr1++
-  5416     05DA  009A               	movwf	26
-  5417     05DB  0016               	moviw fsr1++
-  5418     05DC  009A               	movwf	26
-  5419     05DD  0016               	moviw fsr1++
-  5420     05DE  009A               	movwf	26
-  5421     05DF  0016               	moviw fsr1++
-  5422     05E0  009A               	movwf	26
-  5423     05E1  0016               	moviw fsr1++
-  5424     05E2  009A               	movwf	26
-  5425     05E3  0016               	moviw fsr1++
-  5426     05E4  009A               	movwf	26
-  5427     05E5  0016               	moviw fsr1++
-  5428     05E6  009A               	movwf	26
-  5429     05E7  0016               	moviw fsr1++
-  5430     05E8  009A               	movwf	26
-  5431     05E9  0016               	moviw fsr1++
-  5432     05EA  009A               	movwf	26
-  5433     05EB  0016               	moviw fsr1++
-  5434     05EC  009A               	movwf	26
-  5435     05ED  0016               	moviw fsr1++
-  5436     05EE  009A               	movwf	26
-  5437     05EF  0016               	moviw fsr1++
-  5438     05F0  009A               	movwf	26
-  5439     05F1  0016               	moviw fsr1++
-  5440     05F2  009A               	movwf	26
-  5441     05F3  0016               	moviw fsr1++
-  5442     05F4  009A               	movwf	26
-  5443     05F5  0016               	moviw fsr1++
-  5444     05F6  009A               	movwf	26
-  5445     05F7  0016               	moviw fsr1++
-  5446     05F8  009A               	movwf	26
-  5447     05F9  0016               	moviw fsr1++
-  5448     05FA  009A               	movwf	26
-  5449     05FB  0016               	moviw fsr1++
-  5450     05FC  009A               	movwf	26
-  5451     05FD  0016               	moviw fsr1++
-  5452     05FE  009A               	movwf	26
-  5453     05FF  0016               	moviw fsr1++
-  5454     0600  009A               	movwf	26
-  5455     0601  0016               	moviw fsr1++
-  5456     0602  009A               	movwf	26
-  5457     0603  0016               	moviw fsr1++
-  5458     0604  009A               	movwf	26
-  5459     0605  0016               	moviw fsr1++
-  5460     0606  009A               	movwf	26
-  5461     0607  0016               	moviw fsr1++
-  5462     0608  009A               	movwf	26
-  5463     0609  0016               	moviw fsr1++
-  5464     060A  009A               	movwf	26
-  5465     060B  0016               	moviw fsr1++
-  5466     060C  009A               	movwf	26
-  5467     060D  0016               	moviw fsr1++
-  5468     060E  009A               	movwf	26
-  5469     060F  0016               	moviw fsr1++
-  5470     0610  009A               	movwf	26
-  5471     0611  0016               	moviw fsr1++
-  5472     0612  009A               	movwf	26
-  5473     0613  0016               	moviw fsr1++
-  5474     0614  009A               	movwf	26
-  5475     0615  0016               	moviw fsr1++
-  5476     0616  009A               	movwf	26
-  5477     0617  0016               	moviw fsr1++
-  5478     0618  009A               	movwf	26
-  5479     0619  0016               	moviw fsr1++
-  5480     061A  009A               	movwf	26
-  5481     061B  0016               	moviw fsr1++
-  5482     061C  009A               	movwf	26
-  5483     061D  0016               	moviw fsr1++
-  5484     061E  009A               	movwf	26
-  5485     061F  0016               	moviw fsr1++
-  5486     0620  009A               	movwf	26
-  5487     0621  0016               	moviw fsr1++
-  5488     0622  009A               	movwf	26
-  5489     0623  0016               	moviw fsr1++
-  5490     0624  009A               	movwf	26
-  5491     0625  0016               	moviw fsr1++
-  5492     0626  009A               	movwf	26
-  5493     0627  0016               	moviw fsr1++
-  5494     0628  009A               	movwf	26
-  5495     0629  0016               	moviw fsr1++
-  5496     062A  009A               	movwf	26
-  5497     062B  0016               	moviw fsr1++
-  5498     062C  009A               	movwf	26
-  5499     062D  0016               	moviw fsr1++
-  5500     062E  009A               	movwf	26
-  5501     062F  0016               	moviw fsr1++
-  5502     0630  009A               	movwf	26
-  5503     0631  0016               	moviw fsr1++
-  5504     0632  009A               	movwf	26
-  5505     0633  0016               	moviw fsr1++
-  5506     0634  009A               	movwf	26
-  5507     0635  0016               	moviw fsr1++
-  5508     0636  009A               	movwf	26
-  5509     0637  0016               	moviw fsr1++
-  5510     0638  009A               	movwf	26
-  5511     0639  0016               	moviw fsr1++
-  5512     063A  009A               	movwf	26
-  5513     063B  0016               	moviw fsr1++
-  5514     063C  009A               	movwf	26
-  5515     063D  0016               	moviw fsr1++
-  5516     063E  009A               	movwf	26
-  5517     063F  0016               	moviw fsr1++
-  5518     0640  009A               	movwf	26
-  5519     0641  0016               	moviw fsr1++
-  5520     0642  009A               	movwf	26
-  5521     0643  0016               	moviw fsr1++
-  5522     0644  009A               	movwf	26
-  5523     0645  0016               	moviw fsr1++
-  5524     0646  009A               	movwf	26
-  5525     0647  0016               	moviw fsr1++
-  5526     0648  009A               	movwf	26
-  5527     0649  0016               	moviw fsr1++
-  5528     064A  009A               	movwf	26
-  5529     064B  0016               	moviw fsr1++
-  5530     064C  009A               	movwf	26
-  5531     064D  0016               	moviw fsr1++
-  5532     064E  009A               	movwf	26
-  5533     064F  0016               	moviw fsr1++
-  5534     0650  009A               	movwf	26
-  5535     0651  0016               	moviw fsr1++
-  5536     0652  009A               	movwf	26
-  5537     0653  0016               	moviw fsr1++
-  5538     0654  009A               	movwf	26
-  5539     0655  0016               	moviw fsr1++
-  5540     0656  009A               	movwf	26
-  5541     0657  0016               	moviw fsr1++
-  5542     0658  009A               	movwf	26
-  5543     0659  0016               	moviw fsr1++
-  5544     065A  009A               	movwf	26
-  5545     065B  0016               	moviw fsr1++
-  5546     065C  009A               	movwf	26
-  5547     065D  0016               	moviw fsr1++
-  5548     065E  009A               	movwf	26
-  5549     065F  0016               	moviw fsr1++
-  5550     0660  009A               	movwf	26
-  5551     0661  0016               	moviw fsr1++
-  5552     0662  009A               	movwf	26
-  5553     0663  0016               	moviw fsr1++
-  5554     0664  009A               	movwf	26
-  5555     0665  0016               	moviw fsr1++
-  5556     0666  009A               	movwf	26
-  5557     0667  0016               	moviw fsr1++
-  5558     0668  009A               	movwf	26
-  5559     0669  0016               	moviw fsr1++
-  5560     066A  009A               	movwf	26
-  5561     066B  0016               	moviw fsr1++
-  5562     066C  009A               	movwf	26
-  5563     066D  0016               	moviw fsr1++
-  5564     066E  009A               	movwf	26
-  5565     066F  30C0               	movlw	192
-  5566     0670  009A               	movwf	26
-  5567     0671  2DA4               	goto	line_loop
-  5568     0672                     vblank:
-  5569                           
-  5570 ;;;FINISH LAST LINE AS EMPTY LINE
-  5571                           ;Finish last sync pulse, got here with 5 cycles
-  5572     0672  13A2               	bcf	v_counter& (0+127),7
-  5573     0673  0000               	nop
-  5574     0674  0000               	nop
-  5575     0675  0000               	nop
-  5576     0676  0000               	nop
-  5577     0677  0000               	nop
-  5578     0678  0000               	nop
-  5579     0679  0000               	nop
-  5580     067A  0000               	nop
-  5581     067B  0000               	nop
-  5582     067C  0000               	nop
-  5583     067D  0000               	nop
-  5584     067E  0000               	nop
-  5585     067F  0000               	nop
-  5586     0680  0000               	nop
-  5587     0681  0000               	nop
-  5588     0682  0000               	nop
-  5589     0683  0000               	nop
-  5590     0684  0140               	movlb	0	;Select bank 0
-  5591                           
-  5592                           ;------------- 12 Instruction back porch (48 pixel clocks) ------------
-  5593     0685  171A               	bsf	26,6
-  5594     0686  0000               	nop
-  5595     0687  0000               	nop
-  5596     0688  0000               	nop
-  5597     0689  0000               	nop
-  5598     068A  0000               	nop
-  5599     068B  0000               	nop
-  5600     068C  0000               	nop
-  5601     068D  0000               	nop
-  5602     068E  0000               	nop
-  5603     068F  0000               	nop
-  5604     0690  0000               	nop
-  5605                           
-  5606                           ;------------- Output 80 pixels with 160 instructions (640 pixel clocks) ------------
-  5607     0691  0000               	nop
-  5608     0692  0000               	nop
-  5609     0693  0000               	nop
-  5610     0694  0000               	nop
-  5611     0695  0000               	nop
-  5612     0696  0000               	nop
-  5613     0697  0000               	nop
-  5614     0698  0000               	nop
-  5615     0699  0000               	nop
-  5616     069A  0000               	nop
-  5617     069B  0000               	nop
-  5618     069C  0000               	nop
-  5619     069D  0000               	nop
-  5620     069E  0000               	nop
-  5621     069F  0000               	nop
-  5622     06A0  0000               	nop
-  5623     06A1  0000               	nop
-  5624     06A2  0000               	nop
-  5625     06A3  0000               	nop
-  5626     06A4  0000               	nop
-  5627     06A5  0000               	nop
-  5628     06A6  0000               	nop
-  5629     06A7  0000               	nop
-  5630     06A8  0000               	nop
-  5631     06A9  0000               	nop
-  5632     06AA  0000               	nop
-  5633     06AB  0000               	nop
-  5634     06AC  0000               	nop
-  5635     06AD  0000               	nop
-  5636     06AE  0000               	nop
-  5637     06AF  0000               	nop
-  5638     06B0  0000               	nop
-  5639     06B1  0000               	nop
-  5640     06B2  0000               	nop
-  5641     06B3  0000               	nop
-  5642     06B4  0000               	nop
-  5643     06B5  0000               	nop
-  5644     06B6  0000               	nop
-  5645     06B7  0000               	nop
-  5646     06B8  0000               	nop
-  5647     06B9  0000               	nop
-  5648     06BA  0000               	nop
-  5649     06BB  0000               	nop
-  5650     06BC  0000               	nop
-  5651     06BD  0000               	nop
-  5652     06BE  0000               	nop
-  5653     06BF  0000               	nop
-  5654     06C0  0000               	nop
-  5655     06C1  0000               	nop
-  5656     06C2  0000               	nop
-  5657     06C3  0000               	nop
-  5658     06C4  0000               	nop
-  5659     06C5  0000               	nop
-  5660     06C6  0000               	nop
-  5661     06C7  0000               	nop
-  5662     06C8  0000               	nop
-  5663     06C9  0000               	nop
-  5664     06CA  0000               	nop
-  5665     06CB  0000               	nop
-  5666     06CC  0000               	nop
-  5667     06CD  0000               	nop
-  5668     06CE  0000               	nop
-  5669     06CF  0000               	nop
-  5670     06D0  0000               	nop
-  5671     06D1  0000               	nop
-  5672     06D2  0000               	nop
-  5673     06D3  0000               	nop
-  5674     06D4  0000               	nop
-  5675     06D5  0000               	nop
-  5676     06D6  0000               	nop
-  5677     06D7  0000               	nop
-  5678     06D8  0000               	nop
-  5679     06D9  0000               	nop
-  5680     06DA  0000               	nop
-  5681     06DB  0000               	nop
-  5682     06DC  0000               	nop
-  5683     06DD  0000               	nop
-  5684     06DE  0000               	nop
-  5685     06DF  0000               	nop
-  5686     06E0  0000               	nop
-  5687     06E1  0000               	nop
-  5688     06E2  0000               	nop
-  5689     06E3  0000               	nop
-  5690     06E4  0000               	nop
-  5691     06E5  0000               	nop
-  5692     06E6  0000               	nop
-  5693     06E7  0000               	nop
-  5694     06E8  0000               	nop
-  5695     06E9  0000               	nop
-  5696     06EA  0000               	nop
-  5697     06EB  0000               	nop
-  5698     06EC  0000               	nop
-  5699     06ED  0000               	nop
-  5700     06EE  0000               	nop
-  5701     06EF  0000               	nop
-  5702     06F0  0000               	nop
-  5703     06F1  0000               	nop
-  5704     06F2  0000               	nop
-  5705     06F3  0000               	nop
-  5706     06F4  0000               	nop
-  5707     06F5  0000               	nop
-  5708     06F6  0000               	nop
-  5709     06F7  0000               	nop
-  5710     06F8  0000               	nop
-  5711     06F9  0000               	nop
-  5712     06FA  0000               	nop
-  5713     06FB  0000               	nop
-  5714     06FC  0000               	nop
-  5715     06FD  0000               	nop
-  5716     06FE  0000               	nop
-  5717     06FF  0000               	nop
-  5718     0700  0000               	nop
-  5719     0701  0000               	nop
-  5720     0702  0000               	nop
-  5721     0703  0000               	nop
-  5722     0704  0000               	nop
-  5723     0705  0000               	nop
-  5724     0706  0000               	nop
-  5725     0707  0000               	nop
-  5726     0708  0000               	nop
-  5727     0709  0000               	nop
-  5728     070A  0000               	nop
-  5729     070B  0000               	nop
-  5730     070C  0000               	nop
-  5731     070D  0000               	nop
-  5732     070E  0000               	nop
-  5733     070F  0000               	nop
-  5734     0710  0000               	nop
-  5735     0711  0000               	nop
-  5736     0712  0000               	nop
-  5737     0713  0000               	nop
-  5738     0714  0000               	nop
-  5739     0715  0000               	nop
-  5740     0716  0000               	nop
-  5741     0717  0000               	nop
-  5742     0718  0000               	nop
-  5743     0719  0000               	nop
-  5744     071A  0000               	nop
-  5745     071B  0000               	nop
-  5746     071C  0000               	nop
-  5747     071D  0000               	nop
-  5748     071E  0000               	nop
-  5749     071F  0000               	nop
-  5750     0720  0000               	nop
-  5751     0721  0000               	nop
-  5752     0722  0000               	nop
-  5753     0723  0000               	nop
-  5754     0724  0000               	nop
-  5755     0725  0000               	nop
-  5756     0726  0000               	nop
-  5757     0727  0000               	nop
-  5758     0728  0000               	nop
-  5759     0729  0000               	nop
-  5760     072A  0000               	nop
-  5761     072B  0000               	nop
-  5762     072C  0000               	nop
-  5763     072D  0000               	nop
-  5764     072E  0141               	movlb	1	;Select bank 1
-  5765     072F  300A               	movlw	10
-  5766     0730  00A2               	movwf	v_counter& (0+127)
-  5767     0731  0140               	movlb	0	;Select bank 1
-  5768     0732                     horizontal_line:	
-  5769                           ;-------END OF FIRST VBLANK LINE---------;
-  5770                           
+  5374                           
+  5375                           ;After 15 cycles
+  5376     05BB  0000               	nop
+  5377     05BC  0000               	nop
+  5378     05BD  0000               	nop
+  5379     05BE  0000               	nop
+  5380     05BF                     short_continue_sync:
+  5381                           
+  5382                           ;After 19 cycles
+  5383     05BF  0000               	nop
+  5384     05C0  0000               	nop
+  5385     05C1  0000               	nop
+  5386     05C2  0000               	nop
+  5387     05C3                     shorter_continue_sync:
+  5388                           
+  5389                           ;After 23 cycles
+  5390     05C3  0140               	movlb	0	;Select bank 0
+  5391                           
+  5392                           ;------------- 12 Instruction back porch (48 pixel clocks) ------------
+  5393     05C4  171A               	bsf	26,6
+  5394     05C5  0000               	nop
+  5395     05C6  0000               	nop
+  5396     05C7  0000               	nop
+  5397     05C8  0000               	nop
+  5398     05C9  0000               	nop
+  5399     05CA  0000               	nop
+  5400     05CB  0000               	nop
+  5401     05CC  0000               	nop
+  5402     05CD  0000               	nop
+  5403     05CE  0000               	nop
+  5404     05CF  0016               	moviw fsr1++
+  5405                           
+  5406                           ;------------- Output 80 pixels with 160 instructions (640 pixel clocks) ------------
+  5407     05D0  009A               	movwf	26
+  5408     05D1  0016               	moviw fsr1++
+  5409     05D2  009A               	movwf	26
+  5410     05D3  0016               	moviw fsr1++
+  5411     05D4  009A               	movwf	26
+  5412     05D5  0016               	moviw fsr1++
+  5413     05D6  009A               	movwf	26
+  5414     05D7  0016               	moviw fsr1++
+  5415     05D8  009A               	movwf	26
+  5416     05D9  0016               	moviw fsr1++
+  5417     05DA  009A               	movwf	26
+  5418     05DB  0016               	moviw fsr1++
+  5419     05DC  009A               	movwf	26
+  5420     05DD  0016               	moviw fsr1++
+  5421     05DE  009A               	movwf	26
+  5422     05DF  0016               	moviw fsr1++
+  5423     05E0  009A               	movwf	26
+  5424     05E1  0016               	moviw fsr1++
+  5425     05E2  009A               	movwf	26
+  5426     05E3  0016               	moviw fsr1++
+  5427     05E4  009A               	movwf	26
+  5428     05E5  0016               	moviw fsr1++
+  5429     05E6  009A               	movwf	26
+  5430     05E7  0016               	moviw fsr1++
+  5431     05E8  009A               	movwf	26
+  5432     05E9  0016               	moviw fsr1++
+  5433     05EA  009A               	movwf	26
+  5434     05EB  0016               	moviw fsr1++
+  5435     05EC  009A               	movwf	26
+  5436     05ED  0016               	moviw fsr1++
+  5437     05EE  009A               	movwf	26
+  5438     05EF  0016               	moviw fsr1++
+  5439     05F0  009A               	movwf	26
+  5440     05F1  0016               	moviw fsr1++
+  5441     05F2  009A               	movwf	26
+  5442     05F3  0016               	moviw fsr1++
+  5443     05F4  009A               	movwf	26
+  5444     05F5  0016               	moviw fsr1++
+  5445     05F6  009A               	movwf	26
+  5446     05F7  0016               	moviw fsr1++
+  5447     05F8  009A               	movwf	26
+  5448     05F9  0016               	moviw fsr1++
+  5449     05FA  009A               	movwf	26
+  5450     05FB  0016               	moviw fsr1++
+  5451     05FC  009A               	movwf	26
+  5452     05FD  0016               	moviw fsr1++
+  5453     05FE  009A               	movwf	26
+  5454     05FF  0016               	moviw fsr1++
+  5455     0600  009A               	movwf	26
+  5456     0601  0016               	moviw fsr1++
+  5457     0602  009A               	movwf	26
+  5458     0603  0016               	moviw fsr1++
+  5459     0604  009A               	movwf	26
+  5460     0605  0016               	moviw fsr1++
+  5461     0606  009A               	movwf	26
+  5462     0607  0016               	moviw fsr1++
+  5463     0608  009A               	movwf	26
+  5464     0609  0016               	moviw fsr1++
+  5465     060A  009A               	movwf	26
+  5466     060B  0016               	moviw fsr1++
+  5467     060C  009A               	movwf	26
+  5468     060D  0016               	moviw fsr1++
+  5469     060E  009A               	movwf	26
+  5470     060F  0016               	moviw fsr1++
+  5471     0610  009A               	movwf	26
+  5472     0611  0016               	moviw fsr1++
+  5473     0612  009A               	movwf	26
+  5474     0613  0016               	moviw fsr1++
+  5475     0614  009A               	movwf	26
+  5476     0615  0016               	moviw fsr1++
+  5477     0616  009A               	movwf	26
+  5478     0617  0016               	moviw fsr1++
+  5479     0618  009A               	movwf	26
+  5480     0619  0016               	moviw fsr1++
+  5481     061A  009A               	movwf	26
+  5482     061B  0016               	moviw fsr1++
+  5483     061C  009A               	movwf	26
+  5484     061D  0016               	moviw fsr1++
+  5485     061E  009A               	movwf	26
+  5486     061F  0016               	moviw fsr1++
+  5487     0620  009A               	movwf	26
+  5488     0621  0016               	moviw fsr1++
+  5489     0622  009A               	movwf	26
+  5490     0623  0016               	moviw fsr1++
+  5491     0624  009A               	movwf	26
+  5492     0625  0016               	moviw fsr1++
+  5493     0626  009A               	movwf	26
+  5494     0627  0016               	moviw fsr1++
+  5495     0628  009A               	movwf	26
+  5496     0629  0016               	moviw fsr1++
+  5497     062A  009A               	movwf	26
+  5498     062B  0016               	moviw fsr1++
+  5499     062C  009A               	movwf	26
+  5500     062D  0016               	moviw fsr1++
+  5501     062E  009A               	movwf	26
+  5502     062F  0016               	moviw fsr1++
+  5503     0630  009A               	movwf	26
+  5504     0631  0016               	moviw fsr1++
+  5505     0632  009A               	movwf	26
+  5506     0633  0016               	moviw fsr1++
+  5507     0634  009A               	movwf	26
+  5508     0635  0016               	moviw fsr1++
+  5509     0636  009A               	movwf	26
+  5510     0637  0016               	moviw fsr1++
+  5511     0638  009A               	movwf	26
+  5512     0639  0016               	moviw fsr1++
+  5513     063A  009A               	movwf	26
+  5514     063B  0016               	moviw fsr1++
+  5515     063C  009A               	movwf	26
+  5516     063D  0016               	moviw fsr1++
+  5517     063E  009A               	movwf	26
+  5518     063F  0016               	moviw fsr1++
+  5519     0640  009A               	movwf	26
+  5520     0641  0016               	moviw fsr1++
+  5521     0642  009A               	movwf	26
+  5522     0643  0016               	moviw fsr1++
+  5523     0644  009A               	movwf	26
+  5524     0645  0016               	moviw fsr1++
+  5525     0646  009A               	movwf	26
+  5526     0647  0016               	moviw fsr1++
+  5527     0648  009A               	movwf	26
+  5528     0649  0016               	moviw fsr1++
+  5529     064A  009A               	movwf	26
+  5530     064B  0016               	moviw fsr1++
+  5531     064C  009A               	movwf	26
+  5532     064D  0016               	moviw fsr1++
+  5533     064E  009A               	movwf	26
+  5534     064F  0016               	moviw fsr1++
+  5535     0650  009A               	movwf	26
+  5536     0651  0016               	moviw fsr1++
+  5537     0652  009A               	movwf	26
+  5538     0653  0016               	moviw fsr1++
+  5539     0654  009A               	movwf	26
+  5540     0655  0016               	moviw fsr1++
+  5541     0656  009A               	movwf	26
+  5542     0657  0016               	moviw fsr1++
+  5543     0658  009A               	movwf	26
+  5544     0659  0016               	moviw fsr1++
+  5545     065A  009A               	movwf	26
+  5546     065B  0016               	moviw fsr1++
+  5547     065C  009A               	movwf	26
+  5548     065D  0016               	moviw fsr1++
+  5549     065E  009A               	movwf	26
+  5550     065F  0016               	moviw fsr1++
+  5551     0660  009A               	movwf	26
+  5552     0661  0016               	moviw fsr1++
+  5553     0662  009A               	movwf	26
+  5554     0663  0016               	moviw fsr1++
+  5555     0664  009A               	movwf	26
+  5556     0665  0016               	moviw fsr1++
+  5557     0666  009A               	movwf	26
+  5558     0667  0016               	moviw fsr1++
+  5559     0668  009A               	movwf	26
+  5560     0669  0016               	moviw fsr1++
+  5561     066A  009A               	movwf	26
+  5562     066B  0016               	moviw fsr1++
+  5563     066C  009A               	movwf	26
+  5564     066D  0016               	moviw fsr1++
+  5565     066E  009A               	movwf	26
+  5566     066F  30C0               	movlw	192
+  5567     0670  009A               	movwf	26
+  5568     0671  2DA4               	goto	line_loop
+  5569     0672                     vblank:
+  5570                           
+  5571 ;;;FINISH LAST LINE AS EMPTY LINE
+  5572                           ;Finish last sync pulse, got here with 5 cycles
+  5573     0672  13A2               	bcf	v_counter& (0+127),7
+  5574     0673  0000               	nop
+  5575     0674  0000               	nop
+  5576     0675  0000               	nop
+  5577     0676  0000               	nop
+  5578     0677  0000               	nop
+  5579     0678  0000               	nop
+  5580     0679  0000               	nop
+  5581     067A  0000               	nop
+  5582     067B  0000               	nop
+  5583     067C  0000               	nop
+  5584     067D  0000               	nop
+  5585     067E  0000               	nop
+  5586     067F  0000               	nop
+  5587     0680  0000               	nop
+  5588     0681  0000               	nop
+  5589     0682  0000               	nop
+  5590     0683  0000               	nop
+  5591     0684  0140               	movlb	0	;Select bank 0
+  5592                           
+  5593                           ;------------- 12 Instruction back porch (48 pixel clocks) ------------
+  5594     0685  171A               	bsf	26,6
+  5595     0686  0000               	nop
+  5596     0687  0000               	nop
+  5597     0688  0000               	nop
+  5598     0689  0000               	nop
+  5599     068A  0000               	nop
+  5600     068B  0000               	nop
+  5601     068C  0000               	nop
+  5602     068D  0000               	nop
+  5603     068E  0000               	nop
+  5604     068F  0000               	nop
+  5605     0690  0000               	nop
+  5606                           
+  5607                           ;------------- Output 80 pixels with 160 instructions (640 pixel clocks) ------------
+  5608     0691  0000               	nop
+  5609     0692  0000               	nop
+  5610     0693  0000               	nop
+  5611     0694  0000               	nop
+  5612     0695  0000               	nop
+  5613     0696  0000               	nop
+  5614     0697  0000               	nop
+  5615     0698  0000               	nop
+  5616     0699  0000               	nop
+  5617     069A  0000               	nop
+  5618     069B  0000               	nop
+  5619     069C  0000               	nop
+  5620     069D  0000               	nop
+  5621     069E  0000               	nop
+  5622     069F  0000               	nop
+  5623     06A0  0000               	nop
+  5624     06A1  0000               	nop
+  5625     06A2  0000               	nop
+  5626     06A3  0000               	nop
+  5627     06A4  0000               	nop
+  5628     06A5  0000               	nop
+  5629     06A6  0000               	nop
+  5630     06A7  0000               	nop
+  5631     06A8  0000               	nop
+  5632     06A9  0000               	nop
+  5633     06AA  0000               	nop
+  5634     06AB  0000               	nop
+  5635     06AC  0000               	nop
+  5636     06AD  0000               	nop
+  5637     06AE  0000               	nop
+  5638     06AF  0000               	nop
+  5639     06B0  0000               	nop
+  5640     06B1  0000               	nop
+  5641     06B2  0000               	nop
+  5642     06B3  0000               	nop
+  5643     06B4  0000               	nop
+  5644     06B5  0000               	nop
+  5645     06B6  0000               	nop
+  5646     06B7  0000               	nop
+  5647     06B8  0000               	nop
+  5648     06B9  0000               	nop
+  5649     06BA  0000               	nop
+  5650     06BB  0000               	nop
+  5651     06BC  0000               	nop
+  5652     06BD  0000               	nop
+  5653     06BE  0000               	nop
+  5654     06BF  0000               	nop
+  5655     06C0  0000               	nop
+  5656     06C1  0000               	nop
+  5657     06C2  0000               	nop
+  5658     06C3  0000               	nop
+  5659     06C4  0000               	nop
+  5660     06C5  0000               	nop
+  5661     06C6  0000               	nop
+  5662     06C7  0000               	nop
+  5663     06C8  0000               	nop
+  5664     06C9  0000               	nop
+  5665     06CA  0000               	nop
+  5666     06CB  0000               	nop
+  5667     06CC  0000               	nop
+  5668     06CD  0000               	nop
+  5669     06CE  0000               	nop
+  5670     06CF  0000               	nop
+  5671     06D0  0000               	nop
+  5672     06D1  0000               	nop
+  5673     06D2  0000               	nop
+  5674     06D3  0000               	nop
+  5675     06D4  0000               	nop
+  5676     06D5  0000               	nop
+  5677     06D6  0000               	nop
+  5678     06D7  0000               	nop
+  5679     06D8  0000               	nop
+  5680     06D9  0000               	nop
+  5681     06DA  0000               	nop
+  5682     06DB  0000               	nop
+  5683     06DC  0000               	nop
+  5684     06DD  0000               	nop
+  5685     06DE  0000               	nop
+  5686     06DF  0000               	nop
+  5687     06E0  0000               	nop
+  5688     06E1  0000               	nop
+  5689     06E2  0000               	nop
+  5690     06E3  0000               	nop
+  5691     06E4  0000               	nop
+  5692     06E5  0000               	nop
+  5693     06E6  0000               	nop
+  5694     06E7  0000               	nop
+  5695     06E8  0000               	nop
+  5696     06E9  0000               	nop
+  5697     06EA  0000               	nop
+  5698     06EB  0000               	nop
+  5699     06EC  0000               	nop
+  5700     06ED  0000               	nop
+  5701     06EE  0000               	nop
+  5702     06EF  0000               	nop
+  5703     06F0  0000               	nop
+  5704     06F1  0000               	nop
+  5705     06F2  0000               	nop
+  5706     06F3  0000               	nop
+  5707     06F4  0000               	nop
+  5708     06F5  0000               	nop
+  5709     06F6  0000               	nop
+  5710     06F7  0000               	nop
+  5711     06F8  0000               	nop
+  5712     06F9  0000               	nop
+  5713     06FA  0000               	nop
+  5714     06FB  0000               	nop
+  5715     06FC  0000               	nop
+  5716     06FD  0000               	nop
+  5717     06FE  0000               	nop
+  5718     06FF  0000               	nop
+  5719     0700  0000               	nop
+  5720     0701  0000               	nop
+  5721     0702  0000               	nop
+  5722     0703  0000               	nop
+  5723     0704  0000               	nop
+  5724     0705  0000               	nop
+  5725     0706  0000               	nop
+  5726     0707  0000               	nop
+  5727     0708  0000               	nop
+  5728     0709  0000               	nop
+  5729     070A  0000               	nop
+  5730     070B  0000               	nop
+  5731     070C  0000               	nop
+  5732     070D  0000               	nop
+  5733     070E  0000               	nop
+  5734     070F  0000               	nop
+  5735     0710  0000               	nop
+  5736     0711  0000               	nop
+  5737     0712  0000               	nop
+  5738     0713  0000               	nop
+  5739     0714  0000               	nop
+  5740     0715  0000               	nop
+  5741     0716  0000               	nop
+  5742     0717  0000               	nop
+  5743     0718  0000               	nop
+  5744     0719  0000               	nop
+  5745     071A  0000               	nop
+  5746     071B  0000               	nop
+  5747     071C  0000               	nop
+  5748     071D  0000               	nop
+  5749     071E  0000               	nop
+  5750     071F  0000               	nop
+  5751     0720  0000               	nop
+  5752     0721  0000               	nop
+  5753     0722  0000               	nop
+  5754     0723  0000               	nop
+  5755     0724  0000               	nop
+  5756     0725  0000               	nop
+  5757     0726  0000               	nop
+  5758     0727  0000               	nop
+  5759     0728  0000               	nop
+  5760     0729  0000               	nop
+  5761     072A  0000               	nop
+  5762     072B  0000               	nop
+  5763     072C  0000               	nop
+  5764     072D  0000               	nop
+  5765     072E  0000               	nop
+  5766     072F  0141               	movlb	1	;Select bank 1
+  5767     0730  3004               	movlw	4
+  5768     0731  00A2               	movwf	v_counter& (0+127)
+  5769     0732                     horizontal_line:	
+  5770                           ;-------END OF FIRST VBLANK LINE---------;
   5771                           
-  5772                           ;4 instruction front porch
-  5773     0732  0000               	nop
-  5774     0733  0000               	nop
-  5775     0734  0000               	nop
-  5776     0735  0000               	nop
-  5777                           
-  5778                           ;24 instruction sync
-  5779     0736  131A               	bcf	26,6
-  5780     0737  0000               	nop
-  5781     0738  0000               	nop
-  5782     0739  0000               	nop
-  5783     073A  0000               	nop
-  5784     073B  0000               	nop
-  5785     073C  0000               	nop
-  5786     073D  0000               	nop
-  5787     073E  0000               	nop
-  5788     073F  0000               	nop
-  5789     0740  0000               	nop
-  5790     0741  0000               	nop
-  5791     0742  0000               	nop
-  5792     0743  0000               	nop
-  5793     0744  0000               	nop
-  5794     0745  0000               	nop
-  5795     0746  0000               	nop
-  5796     0747  0000               	nop
-  5797     0748  0000               	nop
-  5798     0749  0000               	nop
-  5799     074A  0000               	nop
-  5800     074B  0000               	nop
-  5801     074C  0000               	nop
-  5802     074D  0000               	nop
-  5803                           
-  5804                           ;12 instruction back porch
-  5805     074E  171A               	bsf	26,6
-  5806     074F  0000               	nop
-  5807     0750  0000               	nop
-  5808     0751  0000               	nop
-  5809     0752  0000               	nop
-  5810     0753  0000               	nop
-  5811     0754  0000               	nop
-  5812     0755  0000               	nop
-  5813     0756  0000               	nop
-  5814     0757  0000               	nop
-  5815     0758  0000               	nop
-  5816     0759  0000               	nop
-  5817                           
-  5818                           ;160 instruction active video (-10)
-  5819     075A  0000               	nop
-  5820     075B  0000               	nop
-  5821     075C  0000               	nop
-  5822     075D  0000               	nop
-  5823     075E  0000               	nop
-  5824     075F  0000               	nop
-  5825     0760  0000               	nop
-  5826     0761  0000               	nop
-  5827     0762  0000               	nop
-  5828     0763  0000               	nop
-  5829     0764  0000               	nop
-  5830     0765  0000               	nop
-  5831     0766  0000               	nop
-  5832     0767  0000               	nop
-  5833     0768  0000               	nop
-  5834     0769  0000               	nop
-  5835     076A  0000               	nop
-  5836     076B  0000               	nop
-  5837     076C  0000               	nop
-  5838     076D  0000               	nop
-  5839     076E  0000               	nop
-  5840     076F  0000               	nop
-  5841     0770  0000               	nop
-  5842     0771  0000               	nop
-  5843     0772  0000               	nop
-  5844     0773  0000               	nop
-  5845     0774  0000               	nop
-  5846     0775  0000               	nop
-  5847     0776  0000               	nop
-  5848     0777  0000               	nop
-  5849     0778  0000               	nop
-  5850     0779  0000               	nop
-  5851     077A  0000               	nop
-  5852     077B  0000               	nop
-  5853     077C  0000               	nop
-  5854     077D  0000               	nop
-  5855     077E  0000               	nop
-  5856     077F  0000               	nop
-  5857     0780  0000               	nop
-  5858     0781  0000               	nop
-  5859     0782  0000               	nop
-  5860     0783  0000               	nop
-  5861     0784  0000               	nop
-  5862     0785  0000               	nop
-  5863     0786  0000               	nop
-  5864     0787  0000               	nop
-  5865     0788  0000               	nop
-  5866     0789  0000               	nop
-  5867     078A  0000               	nop
-  5868     078B  0000               	nop
-  5869     078C  0000               	nop
-  5870     078D  0000               	nop
-  5871     078E  0000               	nop
-  5872     078F  0000               	nop
-  5873     0790  0000               	nop
-  5874     0791  0000               	nop
-  5875     0792  0000               	nop
-  5876     0793  0000               	nop
-  5877     0794  0000               	nop
-  5878     0795  0000               	nop
-  5879     0796  0000               	nop
-  5880     0797  0000               	nop
-  5881     0798  0000               	nop
-  5882     0799  0000               	nop
-  5883     079A  0000               	nop
-  5884     079B  0000               	nop
-  5885     079C  0000               	nop
-  5886     079D  0000               	nop
-  5887     079E  0000               	nop
-  5888     079F  0000               	nop
-  5889     07A0  0000               	nop
-  5890     07A1  0000               	nop
-  5891     07A2  0000               	nop
-  5892     07A3  0000               	nop
-  5893     07A4  0000               	nop
-  5894     07A5  0000               	nop
-  5895     07A6  0000               	nop
-  5896     07A7  0000               	nop
-  5897     07A8  0000               	nop
-  5898     07A9  0000               	nop
-  5899     07AA  0000               	nop
-  5900     07AB  0000               	nop
-  5901     07AC  0000               	nop
-  5902     07AD  0000               	nop
-  5903     07AE  0000               	nop
-  5904     07AF  0000               	nop
-  5905     07B0  0000               	nop
-  5906     07B1  0000               	nop
-  5907     07B2  0000               	nop
-  5908     07B3  0000               	nop
-  5909     07B4  0000               	nop
-  5910     07B5  0000               	nop
-  5911     07B6  0000               	nop
-  5912     07B7  0000               	nop
-  5913     07B8  0000               	nop
-  5914     07B9  0000               	nop
-  5915     07BA  0000               	nop
-  5916     07BB  0000               	nop
-  5917     07BC  0000               	nop
-  5918     07BD  0000               	nop
-  5919     07BE  0000               	nop
-  5920     07BF  0000               	nop
-  5921     07C0  0000               	nop
-  5922     07C1  0000               	nop
-  5923     07C2  0000               	nop
-  5924     07C3  0000               	nop
-  5925     07C4  0000               	nop
-  5926     07C5  0000               	nop
-  5927     07C6  0000               	nop
-  5928     07C7  0000               	nop
-  5929     07C8  0000               	nop
-  5930     07C9  0000               	nop
-  5931     07CA  0000               	nop
-  5932     07CB  0000               	nop
-  5933     07CC  0000               	nop
-  5934     07CD  0000               	nop
-  5935     07CE  0000               	nop
-  5936     07CF  0000               	nop
-  5937     07D0  0000               	nop
-  5938     07D1  0000               	nop
-  5939     07D2  0000               	nop
-  5940     07D3  0000               	nop
-  5941     07D4  0000               	nop
-  5942     07D5  0000               	nop
-  5943     07D6  0000               	nop
-  5944     07D7  0000               	nop
-  5945     07D8  0000               	nop
-  5946     07D9  0000               	nop
-  5947     07DA  0000               	nop
-  5948     07DB  0000               	nop
-  5949     07DC  0000               	nop
-  5950     07DD  0000               	nop
-  5951     07DE  0000               	nop
-  5952     07DF  0000               	nop
-  5953     07E0  0000               	nop
-  5954     07E1  0000               	nop
-  5955     07E2  0000               	nop
-  5956     07E3  0000               	nop
-  5957     07E4  0000               	nop
-  5958     07E5  0000               	nop
-  5959     07E6  0000               	nop
-  5960     07E7  0000               	nop
-  5961     07E8  0000               	nop
-  5962     07E9  0000               	nop
-  5963     07EA  0000               	nop
-  5964     07EB  0000               	nop
-  5965     07EC  0000               	nop
-  5966     07ED  0000               	nop
-  5967     07EE  0000               	nop
-  5968     07EF  0000               	nop
-  5969                           
-  5970                           ;-----------150 instructions
-  5971     07F0  0000               	nop
-  5972     07F1  0000               	nop
-  5973     07F2  0000               	nop
-  5974     07F3  0000               	nop
-  5975     07F4  0000               	nop
-  5976     07F5  0000               	nop
-  5977     07F6  0000               	nop
-  5978     07F7  0000               	nop
-  5979     07F8  0000               	nop
-  5980     07F9  0000               	nop
-  5981                           
-  5982                           ;-----------160 instructions
-  5983     07FA  0000               	nop
-  5984     07FB  2DA4               	goto	frame
-  5985     07FC  0008               	return
+  5772                           
+  5773                           ;4 instruction front porch
+  5774     0732  0140               	movlb	0	;Select bank 1
+  5775     0733  0000               	nop
+  5776     0734  0000               	nop
+  5777     0735  0000               	nop
+  5778                           
+  5779                           ;24 instruction sync
+  5780     0736  131A               	bcf	26,6
+  5781     0737  0000               	nop
+  5782     0738  0000               	nop
+  5783     0739  0000               	nop
+  5784     073A  0000               	nop
+  5785     073B  0000               	nop
+  5786     073C  0000               	nop
+  5787     073D  0000               	nop
+  5788     073E  0000               	nop
+  5789     073F  0000               	nop
+  5790     0740  0000               	nop
+  5791     0741  0000               	nop
+  5792     0742  0000               	nop
+  5793     0743  0000               	nop
+  5794     0744  0000               	nop
+  5795     0745  0000               	nop
+  5796     0746  0000               	nop
+  5797     0747  0000               	nop
+  5798     0748  0000               	nop
+  5799     0749  0000               	nop
+  5800     074A  0000               	nop
+  5801     074B  0000               	nop
+  5802     074C  0000               	nop
+  5803     074D  0000               	nop
+  5804                           
+  5805                           ;12 instruction back porch
+  5806     074E  171A               	bsf	26,6
+  5807     074F  0000               	nop
+  5808     0750  0000               	nop
+  5809     0751  0000               	nop
+  5810     0752  0000               	nop
+  5811     0753  0000               	nop
+  5812     0754  0000               	nop
+  5813     0755  0000               	nop
+  5814     0756  0000               	nop
+  5815     0757  0000               	nop
+  5816     0758  0000               	nop
+  5817     0759  0000               	nop
+  5818                           
+  5819                           ;160 instruction active video (-10)
+  5820     075A  0000               	nop
+  5821     075B  0000               	nop
+  5822     075C  0000               	nop
+  5823     075D  0000               	nop
+  5824     075E  0000               	nop
+  5825     075F  0000               	nop
+  5826     0760  0000               	nop
+  5827     0761  0000               	nop
+  5828     0762  0000               	nop
+  5829     0763  0000               	nop
+  5830     0764  0000               	nop
+  5831     0765  0000               	nop
+  5832     0766  0000               	nop
+  5833     0767  0000               	nop
+  5834     0768  0000               	nop
+  5835     0769  0000               	nop
+  5836     076A  0000               	nop
+  5837     076B  0000               	nop
+  5838     076C  0000               	nop
+  5839     076D  0000               	nop
+  5840     076E  0000               	nop
+  5841     076F  0000               	nop
+  5842     0770  0000               	nop
+  5843     0771  0000               	nop
+  5844     0772  0000               	nop
+  5845     0773  0000               	nop
+  5846     0774  0000               	nop
+  5847     0775  0000               	nop
+  5848     0776  0000               	nop
+  5849     0777  0000               	nop
+  5850     0778  0000               	nop
+  5851     0779  0000               	nop
+  5852     077A  0000               	nop
+  5853     077B  0000               	nop
+  5854     077C  0000               	nop
+  5855     077D  0000               	nop
+  5856     077E  0000               	nop
+  5857     077F  0000               	nop
+  5858     0780  0000               	nop
+  5859     0781  0000               	nop
+  5860     0782  0000               	nop
+  5861     0783  0000               	nop
+  5862     0784  0000               	nop
+  5863     0785  0000               	nop
+  5864     0786  0000               	nop
+  5865     0787  0000               	nop
+  5866     0788  0000               	nop
+  5867     0789  0000               	nop
+  5868     078A  0000               	nop
+  5869     078B  0000               	nop
+  5870     078C  0000               	nop
+  5871     078D  0000               	nop
+  5872     078E  0000               	nop
+  5873     078F  0000               	nop
+  5874     0790  0000               	nop
+  5875     0791  0000               	nop
+  5876     0792  0000               	nop
+  5877     0793  0000               	nop
+  5878     0794  0000               	nop
+  5879     0795  0000               	nop
+  5880     0796  0000               	nop
+  5881     0797  0000               	nop
+  5882     0798  0000               	nop
+  5883     0799  0000               	nop
+  5884     079A  0000               	nop
+  5885     079B  0000               	nop
+  5886     079C  0000               	nop
+  5887     079D  0000               	nop
+  5888     079E  0000               	nop
+  5889     079F  0000               	nop
+  5890     07A0  0000               	nop
+  5891     07A1  0000               	nop
+  5892     07A2  0000               	nop
+  5893     07A3  0000               	nop
+  5894     07A4  0000               	nop
+  5895     07A5  0000               	nop
+  5896     07A6  0000               	nop
+  5897     07A7  0000               	nop
+  5898     07A8  0000               	nop
+  5899     07A9  0000               	nop
+  5900     07AA  0000               	nop
+  5901     07AB  0000               	nop
+  5902     07AC  0000               	nop
+  5903     07AD  0000               	nop
+  5904     07AE  0000               	nop
+  5905     07AF  0000               	nop
+  5906     07B0  0000               	nop
+  5907     07B1  0000               	nop
+  5908     07B2  0000               	nop
+  5909     07B3  0000               	nop
+  5910     07B4  0000               	nop
+  5911     07B5  0000               	nop
+  5912     07B6  0000               	nop
+  5913     07B7  0000               	nop
+  5914     07B8  0000               	nop
+  5915     07B9  0000               	nop
+  5916     07BA  0000               	nop
+  5917     07BB  0000               	nop
+  5918     07BC  0000               	nop
+  5919     07BD  0000               	nop
+  5920     07BE  0000               	nop
+  5921     07BF  0000               	nop
+  5922     07C0  0000               	nop
+  5923     07C1  0000               	nop
+  5924     07C2  0000               	nop
+  5925     07C3  0000               	nop
+  5926     07C4  0000               	nop
+  5927     07C5  0000               	nop
+  5928     07C6  0000               	nop
+  5929     07C7  0000               	nop
+  5930     07C8  0000               	nop
+  5931     07C9  0000               	nop
+  5932     07CA  0000               	nop
+  5933     07CB  0000               	nop
+  5934     07CC  0000               	nop
+  5935     07CD  0000               	nop
+  5936     07CE  0000               	nop
+  5937     07CF  0000               	nop
+  5938     07D0  0000               	nop
+  5939     07D1  0000               	nop
+  5940     07D2  0000               	nop
+  5941     07D3  0000               	nop
+  5942     07D4  0000               	nop
+  5943     07D5  0000               	nop
+  5944     07D6  0000               	nop
+  5945     07D7  0000               	nop
+  5946     07D8  0000               	nop
+  5947     07D9  0000               	nop
+  5948     07DA  0000               	nop
+  5949     07DB  0000               	nop
+  5950     07DC  0000               	nop
+  5951     07DD  0000               	nop
+  5952     07DE  0000               	nop
+  5953     07DF  0000               	nop
+  5954     07E0  0000               	nop
+  5955     07E1  0000               	nop
+  5956     07E2  0000               	nop
+  5957     07E3  0000               	nop
+  5958     07E4  0000               	nop
+  5959     07E5  0000               	nop
+  5960     07E6  0000               	nop
+  5961     07E7  0000               	nop
+  5962     07E8  0000               	nop
+  5963     07E9  0000               	nop
+  5964     07EA  0000               	nop
+  5965     07EB  0000               	nop
+  5966     07EC  0000               	nop
+  5967     07ED  0000               	nop
+  5968     07EE  0000               	nop
+  5969     07EF  0000               	nop
+  5970                           
+  5971                           ;-----------150 instructions
+  5972     07F0  0000               	nop
+  5973     07F1  0000               	nop
+  5974     07F2  0000               	nop
+  5975     07F3  0000               	nop
+  5976     07F4  0000               	nop
+  5977     07F5  0000               	nop
+  5978     07F6  0141               	movlb	1
+  5979     07F7  0BA2               	decfsz	v_counter& (0+127),f
+  5980     07F8  2F32               	goto	horizontal_line
+  5981     07F9  0000               	nop
+  5982                           
+  5983                           ;-----------160 instructions
+  5984     07FA  0140               	movlb	0
+  5985     07FB  2DA4               	goto	frame
+  5986     07FC  0008               	return
 
 
 Microchip Technology PIC Macro Assembler V3.10 build 20250813170317 
-Symbol Table                                                                                               Wed Jul  1 18:47:44 2026
+Symbol Table                                                                                               Wed Jul  1 19:07:37 2026
 
                             LATC 001A                             FSR1H 0007                             FSR1L 0006  
                            frame 05A4             shorter_continue_sync 05C3                            vblank 0672  
              short_continue_sync 05BF                        ARRAY_ADDR 0020                           v_state 00A3  
-                 horizontal_line 0732                       INNER_LOOPS 0002                     V_FRONT_PORCH 000B  
+                 horizontal_line 0732                       INNER_LOOPS 0002                     V_FRONT_PORCH 0005  
                      OUTER_LOOPS 0002                long_continue_sync 05BB                      _line_buffer 0020  
-                       _drawLine 059C                         line_loop 05A4                   linecount_inner 00A1  
+                       _drawLine 059B                         line_loop 05A4                   linecount_inner 00A1  
                  linecount_outer 00A0                         v_counter 00A2  

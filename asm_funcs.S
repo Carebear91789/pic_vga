@@ -7,7 +7,7 @@ GLOBAL _line_buffer
 INNER_LOOPS	EQU	2
 OUTER_LOOPS	EQU	2
 	
-V_FRONT_PORCH	EQU	11
+V_FRONT_PORCH	EQU	5
 V_SYNC_PULSE	EQU	2
 V_BACK_PORCH	EQU	31
 	
@@ -41,6 +41,8 @@ _drawLine:
     CLRF    BANKMASK(v_state)
     
     MOVLB   0x00			    ;Select bank 0
+    CLRF    FSR1H
+    
     frame:
     
     line_loop:
@@ -59,10 +61,9 @@ _drawLine:
     NOP
     NOP 
     NOP
+    NOP
     
     MOVWF   FSR1L
-    CLRF    FSR1H
-    
     
     MOVLB   0x01				;Select bank 1
     DECFSZ  BANKMASK(linecount_inner), 1	;Decrement linecount and store in linecount, skip next instruction if zero
@@ -472,16 +473,17 @@ vblank:
     NOP
     NOP
     NOP
+    NOP
     MOVLB   0x01    ;Select bank 1
     MOVLW   (V_FRONT_PORCH - 1)
     MOVWF   BANKMASK(v_counter)
-    MOVLB   0x00    ;Select bank 1
+    
     
     ;-------END OF FIRST VBLANK LINE---------;
 
     horizontal_line:
     ;4 instruction front porch
-    NOP
+    MOVLB   0x00    ;Select bank 1
     NOP
     NOP
     NOP
@@ -681,15 +683,15 @@ vblank:
     NOP
     NOP
     NOP
-    NOP
-    NOP
-    NOP
+    MOVLB   0x01
+    DECFSZ  BANKMASK(v_counter)
+    GOTO    horizontal_line
     NOP
     ;-----------160 instructions
     
     
     //3 instruction return to frame
-    NOP
-    GOTO frame
+    MOVLB   0x00
+    GOTO    frame
     
     RETURN

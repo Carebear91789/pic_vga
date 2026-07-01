@@ -1,7 +1,7 @@
 
 
 Microchip MPLAB XC8 Assembler V3.10 build 20250813170317 
-                                                                                               Wed Jul  1 18:11:51 2026
+                                                                                               Wed Jul  1 18:59:50 2026
 
 Microchip MPLAB XC8 C Compiler v3.10 (Free license) build 20250813170317 Og1 
      1                           	processor	16F15244
@@ -248,7 +248,7 @@ Microchip MPLAB XC8 C Compiler v3.10 (Free license) build 20250813170317 Og1
    242                           
    243     07FD                     __end_of__initialization:
    244     07FD  0140               	movlb	0
-   245     07FE  3186  2E4C         	ljmp	_main	;jump to C main() function
+   245     07FE  3185  2D82         	ljmp	_main	;jump to C main() function
    246                           
    247                           	psect	cstackCOMMON
    248     0070                     __pcstackCOMMON:
@@ -285,7 +285,7 @@ Microchip MPLAB XC8 C Compiler v3.10 (Free license) build 20250813170317 Og1
    279     0074                     ??_main:
    280                           
    281                           	psect	maintext
-   282     064C                     __pmaintext:	
+   282     0582                     __pmaintext:	
    283                           ; 1 bytes @ 0x4
    284 ;;
    285 ;;Main: autosize = 0, tempsize = 0, incstack = 0, save=0
@@ -320,56 +320,56 @@ Microchip MPLAB XC8 C Compiler v3.10 (Free license) build 20250813170317 Og1
    314 ;; This function uses a non-reentrant model
    315 ;;
    316                           
-   317     064C                     _main:	
+   317     0582                     _main:	
    318                           ;psect for function _main
    319                           
-   320     064C                     l528:	
+   320     0582                     l528:	
    321                           ;incstack = 0
    322                           ; Regs used in _main: [allreg]
    323                           
    324                           
    325                           ;vga_test_full_signal.c: 53:     ANSELA = 0x00;
-   326     064C  017E               	movlb	62	; select bank62
-   327     064D  01B8               	clrf	56	;volatile
+   326     0582  017E               	movlb	62	; select bank62
+   327     0583  01B8               	clrf	56	;volatile
    328                           
    329                           ;vga_test_full_signal.c: 54:     ANSELB = 0x00;
-   330     064E  01C3               	clrf	67	;volatile
+   330     0584  01C3               	clrf	67	;volatile
    331                           
    332                           ;vga_test_full_signal.c: 55:     ANSELC = 0x00;
-   333     064F  01CE               	clrf	78	;volatile
-   334     0650                     l530:
+   333     0585  01CE               	clrf	78	;volatile
+   334     0586                     l530:
    335                           
    336                           ;vga_test_full_signal.c: 57:     fillLineBuffer(line_buffer, 80);
-   337     0650  3020               	movlw	low _line_buffer
-   338     0651  00F0               	movwf	fillLineBuffer@line
-   339     0652  3000               	movlw	high _line_buffer
-   340     0653  00F1               	movwf	fillLineBuffer@line+1
-   341     0654  3050               	movlw	80
-   342     0655  00F2               	movwf	fillLineBuffer@size
-   343     0656  3186  2639  3186   	fcall	_fillLineBuffer
-   344     0659                     l532:
+   337     0586  3020               	movlw	low _line_buffer
+   338     0587  00F0               	movwf	fillLineBuffer@line
+   339     0588  3000               	movlw	high _line_buffer
+   340     0589  00F1               	movwf	fillLineBuffer@line+1
+   341     058A  3050               	movlw	80
+   342     058B  00F2               	movwf	fillLineBuffer@size
+   343     058C  3185  256D  3185   	fcall	_fillLineBuffer
+   344     058F                     l532:
    345                           
    346                           ;vga_test_full_signal.c: 59:     TRISC = 0;
-   347     0659  0140               	movlb	0	; select bank0
-   348     065A  0194               	clrf	20	;volatile
-   349     065B                     l534:
+   347     058F  0140               	movlb	0	; select bank0
+   348     0590  0194               	clrf	20	;volatile
+   349     0591                     l534:
    350                           
    351                           ;vga_test_full_signal.c: 60:     LATC = 0;
-   352     065B  019A               	clrf	26	;volatile
-   353     065C                     l536:
+   352     0591  019A               	clrf	26	;volatile
+   353     0592                     l536:
    354                           
    355                           ;vga_test_full_signal.c: 63:         drawLine(line_buffer);
-   356     065C  3020               	movlw	low _line_buffer
-   357     065D  00F0               	movwf	_drawLine$0
-   358     065E  3000               	movlw	high _line_buffer
-   359     065F  00F1               	movwf	_drawLine$0+1
-   360     0660  3186  2666  3186   	fcall	_drawLine
-   361     0663  2E5C               	goto	l536
-   362     0664  3180  2803         	ljmp	start
-   363     0666                     __end_of_main:
+   356     0592  3020               	movlw	low _line_buffer
+   357     0593  00F0               	movwf	_drawLine$0
+   358     0594  3000               	movlw	high _line_buffer
+   359     0595  00F1               	movwf	_drawLine$0+1
+   360     0596  3185  259C  3185   	fcall	_drawLine
+   361     0599  2D92               	goto	l536
+   362     059A  3180  2803         	ljmp	start
+   363     059C                     __end_of_main:
    364                           
    365                           	psect	text1
-   366     0639                     __ptext1:	
+   366     056D                     __ptext1:	
    367 ;; *************** function _fillLineBuffer *****************
    368 ;; Defined at:
    369 ;;		line 43 in file "vga_test_full_signal.c"
@@ -401,114 +401,116 @@ Microchip MPLAB XC8 C Compiler v3.10 (Free license) build 20250813170317 Og1
    395 ;; This function uses a non-reentrant model
    396 ;;
    397                           
-   398     0639                     _fillLineBuffer:	
+   398     056D                     _fillLineBuffer:	
    399                           ;psect for function _fillLineBuffer
    400                           
-   401     0639                     l520:	
+   401     056D                     l520:	
    402                           ;incstack = 0
    403                           ; Regs used in _fillLineBuffer: [wreg+fsr1l+fsr1h+status,2+status,0]
    404                           
    405                           
    406                           ;vga_test_full_signal.c: 44:     for (uint8_t i = 0; i < size; i++) {
-   407     0639  01F3               	clrf	fillLineBuffer@i
-   408     063A  2E45               	goto	l526
-   409     063B                     l522:
+   407     056D  01F3               	clrf	fillLineBuffer@i
+   408     056E  2D7B               	goto	l526
+   409     056F                     l522:
    410                           
-   411                           ;vga_test_full_signal.c: 46:         line[i] = 63 + 64 + 128;
-   412     063B  0873               	movf	fillLineBuffer@i,w
-   413     063C  0770               	addwf	fillLineBuffer@line,w
-   414     063D  0086               	movwf	6
-   415     063E  3000               	movlw	0
-   416     063F  3D71               	addwfc	fillLineBuffer@line+1,w
-   417     0640  0087               	movwf	7
-   418     0641  30FF               	movlw	255
-   419     0642  0081               	movwf	1
-   420     0643                     l524:
-   421                           
-   422                           ;vga_test_full_signal.c: 47:     }
-   423     0643  3001               	movlw	1
-   424     0644  07F3               	addwf	fillLineBuffer@i,f
-   425     0645                     l526:
-   426     0645  0872               	movf	fillLineBuffer@size,w
-   427     0646  0273               	subwf	fillLineBuffer@i,w
-   428     0647  1C03               	skipc
-   429     0648  2E4A               	goto	u21
-   430     0649  2E4B               	goto	u20
-   431     064A                     u21:
-   432     064A  2E3B               	goto	l522
-   433     064B                     u20:
-   434     064B                     l20:
-   435     064B  0008               	return
-   436     064C                     __end_of_fillLineBuffer:
-   437     0001                     ___latbits      equ	1
-   438     007E                     btemp           set	126	;btemp
-   439     007E                     btemp0          set	126
-   440     007F                     btemp1          set	127
-   441     007E                     wtemp0          set	126
-   442     007F                     wtemp0a         set	127
-   443     007F                     ttemp0a         set	127
-   444     0080                     ltemp0a         set	128
-   445                           
-   446                           	psect	config
+   411                           ;vga_test_full_signal.c: 45:         line[i] = (i%64) + 64 + 128;
+   412     056F  0873               	movf	fillLineBuffer@i,w
+   413     0570  0770               	addwf	fillLineBuffer@line,w
+   414     0571  0086               	movwf	6
+   415     0572  3000               	movlw	0
+   416     0573  3D71               	addwfc	fillLineBuffer@line+1,w
+   417     0574  0087               	movwf	7
+   418     0575  0873               	movf	fillLineBuffer@i,w
+   419     0576  393F               	andlw	63
+   420     0577  3EC0               	addlw	192
+   421     0578  0081               	movwf	1
+   422     0579                     l524:
+   423                           
+   424                           ;vga_test_full_signal.c: 47:     }
+   425     0579  3001               	movlw	1
+   426     057A  07F3               	addwf	fillLineBuffer@i,f
+   427     057B                     l526:
+   428     057B  0872               	movf	fillLineBuffer@size,w
+   429     057C  0273               	subwf	fillLineBuffer@i,w
+   430     057D  1C03               	skipc
+   431     057E  2D80               	goto	u21
+   432     057F  2D81               	goto	u20
+   433     0580                     u21:
+   434     0580  2D6F               	goto	l522
+   435     0581                     u20:
+   436     0581                     l20:
+   437     0581  0008               	return
+   438     0582                     __end_of_fillLineBuffer:
+   439     0001                     ___latbits      equ	1
+   440     007E                     btemp           set	126	;btemp
+   441     007E                     btemp0          set	126
+   442     007F                     btemp1          set	127
+   443     007E                     wtemp0          set	126
+   444     007F                     wtemp0a         set	127
+   445     007F                     ttemp0a         set	127
+   446     0080                     ltemp0a         set	128
    447                           
-   448                           ;Config register CONFIG1 @ 0x8007
-   449                           ;	External Oscillator Mode Selection bits
-   450                           ;	FEXTOSC = 0xB, user specified literal
-   451                           ;	Power-up Default Value for COSC bits
-   452                           ;	RSTOSC = 0x6F, user specified literal
-   453                           ;	Clock Out Enable bit
-   454                           ;	CLKOUTEN = OFF, CLKOUT function is disabled; I/O function on RA4
-   455                           ;	VDD Range Analog Calibration Selection bit
-   456                           ;	VDDAR = HI, Internal analog systems are calibrated for operation between VDD = 2.3V - 
+   448                           	psect	config
+   449                           
+   450                           ;Config register CONFIG1 @ 0x8007
+   451                           ;	External Oscillator Mode Selection bits
+   452                           ;	FEXTOSC = 0xB, user specified literal
+   453                           ;	Power-up Default Value for COSC bits
+   454                           ;	RSTOSC = 0x6F, user specified literal
+   455                           ;	Clock Out Enable bit
+   456                           ;	CLKOUTEN = OFF, CLKOUT function is disabled; I/O function on RA4
+   457                           ;	VDD Range Analog Calibration Selection bit
+   458                           ;	VDDAR = HI, Internal analog systems are calibrated for operation between VDD = 2.3V - 
       +                          5.5V
-   457     8007                     	org	32775
-   458     8007  3FFF               	dw	16383
-   459                           
-   460                           ;Config register CONFIG2 @ 0x8008
-   461                           ;	Master Clear Enable bit
-   462                           ;	MCLRE = EXTMCLR, If LVP = 0, MCLR pin is MCLR; If LVP = 1, RA3 pin function is MCLR
-   463                           ;	Power-up Timer Selection bits
-   464                           ;	PWRTS = PWRT_OFF, PWRT is disabled
-   465                           ;	WDT Operating Mode bits
-   466                           ;	WDTE = OFF, WDT disabled; SEN is ignored
-   467                           ;	Brown-out Reset Enable bits
-   468                           ;	BOREN = ON, Brown-out Reset Enabled, SBOREN bit is ignored
-   469                           ;	Brown-out Reset Voltage Selection bit
-   470                           ;	BORV = LO, Brown-out Reset Voltage (VBOR) set to 1.9V
-   471                           ;	PPSLOCKED One-Way Set Enable bit
-   472                           ;	PPS1WAY = ON, The PPSLOCKED bit can be set once after an unlocking sequence is execute
+   459     8007                     	org	32775
+   460     8007  3FFF               	dw	16383
+   461                           
+   462                           ;Config register CONFIG2 @ 0x8008
+   463                           ;	Master Clear Enable bit
+   464                           ;	MCLRE = EXTMCLR, If LVP = 0, MCLR pin is MCLR; If LVP = 1, RA3 pin function is MCLR
+   465                           ;	Power-up Timer Selection bits
+   466                           ;	PWRTS = PWRT_OFF, PWRT is disabled
+   467                           ;	WDT Operating Mode bits
+   468                           ;	WDTE = OFF, WDT disabled; SEN is ignored
+   469                           ;	Brown-out Reset Enable bits
+   470                           ;	BOREN = ON, Brown-out Reset Enabled, SBOREN bit is ignored
+   471                           ;	Brown-out Reset Voltage Selection bit
+   472                           ;	BORV = LO, Brown-out Reset Voltage (VBOR) set to 1.9V
+   473                           ;	PPSLOCKED One-Way Set Enable bit
+   474                           ;	PPS1WAY = ON, The PPSLOCKED bit can be set once after an unlocking sequence is execute
       +                          d; once PPSLOCKED is set, all future changes to PPS registers are prevented
-   473                           ;	Stack Overflow/Underflow Reset Enable bit
-   474                           ;	STVREN = ON, Stack Overflow or Underflow will cause a reset
-   475     8008                     	org	32776
-   476     8008  3FE7               	dw	16359
-   477                           
-   478                           ;Config register CONFIG4 @ 0x800A
-   479                           ;	Boot Block Size Selection bits
-   480                           ;	BBSIZE = BB512, 512 words boot block size
-   481                           ;	Boot Block Enable bit
-   482                           ;	BBEN = OFF, Boot Block is disabled
-   483                           ;	SAF Enable bit
-   484                           ;	SAFEN = OFF, SAF is disabled
-   485                           ;	Application Block Write Protection bit
-   486                           ;	WRTAPP = OFF, Application Block is not write-protected
-   487                           ;	Boot Block Write Protection bit
-   488                           ;	WRTB = OFF, Boot Block is not write-protected
-   489                           ;	Configuration Registers Write Protection bit
-   490                           ;	WRTC = OFF, Configuration Registers are not write-protected
-   491                           ;	Storage Area Flash (SAF) Write Protection bit
-   492                           ;	WRTSAF = OFF, SAF is not write-protected
-   493                           ;	Low Voltage Programming Enable bit
-   494                           ;	LVP = ON, Low Voltage programming enabled. MCLR/Vpp pin function is MCLR. MCLRE Config
+   475                           ;	Stack Overflow/Underflow Reset Enable bit
+   476                           ;	STVREN = ON, Stack Overflow or Underflow will cause a reset
+   477     8008                     	org	32776
+   478     8008  3FE7               	dw	16359
+   479                           
+   480                           ;Config register CONFIG4 @ 0x800A
+   481                           ;	Boot Block Size Selection bits
+   482                           ;	BBSIZE = BB512, 512 words boot block size
+   483                           ;	Boot Block Enable bit
+   484                           ;	BBEN = OFF, Boot Block is disabled
+   485                           ;	SAF Enable bit
+   486                           ;	SAFEN = OFF, SAF is disabled
+   487                           ;	Application Block Write Protection bit
+   488                           ;	WRTAPP = OFF, Application Block is not write-protected
+   489                           ;	Boot Block Write Protection bit
+   490                           ;	WRTB = OFF, Boot Block is not write-protected
+   491                           ;	Configuration Registers Write Protection bit
+   492                           ;	WRTC = OFF, Configuration Registers are not write-protected
+   493                           ;	Storage Area Flash (SAF) Write Protection bit
+   494                           ;	WRTSAF = OFF, SAF is not write-protected
+   495                           ;	Low Voltage Programming Enable bit
+   496                           ;	LVP = ON, Low Voltage programming enabled. MCLR/Vpp pin function is MCLR. MCLRE Config
       +                          uration bit is ignored.
-   495     800A                     	org	32778
-   496     800A  3FFF               	dw	16383
-   497                           
-   498                           ;Config register CONFIG5 @ 0x800B
-   499                           ;	User Program Flash Memory Code Protection bit
-   500                           ;	CP = OFF, User Program Flash Memory code protection is disabled
-   501     800B                     	org	32779
-   502     800B  3FFF               	dw	16383
+   497     800A                     	org	32778
+   498     800A  3FFF               	dw	16383
+   499                           
+   500                           ;Config register CONFIG5 @ 0x800B
+   501                           ;	User Program Flash Memory Code Protection bit
+   502                           ;	CP = OFF, User Program Flash Memory code protection is disabled
+   503     800B                     	org	32779
+   504     800B  3FFF               	dw	16383
 
 Data Sizes:
     Strings     0
@@ -575,11 +577,11 @@ Call Graph Tables:
  ---------------------------------------------------------------------------------
  (Depth) Function   	        Calls       Base Space   Used Autos Params    Refs
  ---------------------------------------------------------------------------------
- (0) _main                                                 0     0      0      93
+ (0) _main                                                 0     0      0     115
                            _drawLine
                      _fillLineBuffer
  ---------------------------------------------------------------------------------
- (1) _fillLineBuffer                                       4     1      3      92
+ (1) _fillLineBuffer                                       4     1      3     114
                                               0 COMMON     4     1      3
  ---------------------------------------------------------------------------------
  (1) _drawLine                                             2     0      2       1
@@ -617,22 +619,22 @@ DATA                 0      0       4      0.0%
 
 
 Microchip Technology PIC Macro Assembler V3.10 build 20250813170317 
-Symbol Table                                                                                   Wed Jul  1 18:11:51 2026
+Symbol Table                                                                                   Wed Jul  1 18:59:50 2026
 
-                     l20 064B                       u20 064B                       u21 064A  
-                    l520 0639                      l522 063B                      l530 0650  
-                    l524 0643                      l532 0659                      l526 0645  
-                    l534 065B                      l536 065C                      l528 064C  
-       ??_fillLineBuffer 0073                     _LATC 001A                     _main 064C  
+                     l20 0581                       u20 0581                       u21 0580  
+                    l520 056D                      l522 056F                      l530 0586  
+                    l524 0579                      l532 058F                      l526 057B  
+                    l534 0591                      l536 0592                      l528 0582  
+       ??_fillLineBuffer 0073                     _LATC 001A                     _main 0582  
                    indf1 0001                     fsr1l 0006                     btemp 007E  
                    start 0003                    ?_main 0070                    _TRISC 0014  
                   btemp0 007E                    btemp1 007F                    wtemp0 007E  
-        __initialization 07FD             __end_of_main 0666                   ??_main 0074  
+        __initialization 07FD             __end_of_main 059C                   ??_main 0074  
                  _ANSELA 1F38                   _ANSELB 1F43                   _ANSELC 1F4E  
                  ltemp0a 0080                   ttemp0a 007F                   wtemp0a 007F  
-__end_of__initialization 07FD           __pcstackCOMMON 0070               __pmaintext 064C  
-             _drawLine$0 0070                ?_drawLine 0070                  __ptext1 0639  
+__end_of__initialization 07FD           __pcstackCOMMON 0070               __pmaintext 0582  
+             _drawLine$0 0070                ?_drawLine 0070                  __ptext1 056D  
              ??_drawLine 0070     end_of_initialization 07FD      start_initialization 07FD  
-              ___latbits 0001           _fillLineBuffer 0639       fillLineBuffer@line 0070  
-     fillLineBuffer@size 0072          fillLineBuffer@i 0073   __end_of_fillLineBuffer 064C  
-        ?_fillLineBuffer 0070              _line_buffer 0020                 _drawLine 0666  
+              ___latbits 0001           _fillLineBuffer 056D       fillLineBuffer@line 0070  
+     fillLineBuffer@size 0072          fillLineBuffer@i 0073   __end_of_fillLineBuffer 0582  
+        ?_fillLineBuffer 0070              _line_buffer 0020                 _drawLine 059C  
