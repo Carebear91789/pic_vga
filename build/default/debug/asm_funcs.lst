@@ -1,7 +1,7 @@
 
 
 Microchip MPLAB XC8 Assembler V3.10 build 20250813170317 
-                                                                                                           Wed Jul  1 17:35:23 2026
+                                                                                                           Wed Jul  1 18:11:49 2026
 
 
      1                           	processor	16F15244
@@ -5319,7 +5319,7 @@ Microchip MPLAB XC8 Assembler V3.10 build 20250813170317
   5313                           ; restore_stack adjusts the SP to remove all auto and parameter
   5314                           ; objects from the stack prior to returning from a function
   5315     0000                     
-  5316                           ;Number of displayed lines = inner * outer - 1
+  5316                           ;Number of displayed lines = inner * outer
   5317     0002                     INNER_LOOPS     equ	2
   5318     0002                     OUTER_LOOPS     equ	2
   5319     000B                     V_FRONT_PORCH   equ	11
@@ -5340,61 +5340,61 @@ Microchip MPLAB XC8 Assembler V3.10 build 20250813170317
   5334     066D                     line_loop:
   5335                           
   5336                           ;------------- 4 Instruction front porch (16 pixel clocks) ------------
-  5337 ;; 2 instructions from GOTO at EOF
+  5337 ;; 3 instructions from MOVWF and GOTO at EOL
   5338     066D  3020               	movlw	32
-  5339     066E  0000               	nop
-  5340                           
-  5341                           ;------------- 24 Instruction sync pulse (96 pixel clocks) ------------
-  5342     066F  131A               	bcf	26,6
+  5339                           
+  5340                           ;------------- 24 Instruction sync pulse (96 pixel clocks) ------------
+  5341     066E  131A               	bcf	26,6
+  5342     066F  0141               	movlb	1	;Select bank 1
   5343     0670  1BA2               	btfsc	v_counter& (0+127),7	;Skip next instruction (NOP) if bit 7 is zero
   5344     0671  2F3B               	goto	vblank
-  5345     0672  0000               	nop
+  5345     0672  0140               	movlb	0	;Select bank 0
   5346     0673  0000               	nop
   5347     0674  0000               	nop
   5348     0675  0000               	nop
   5349     0676  0000               	nop
-  5350     0677  0000               	nop
-  5351     0678  0086               	movwf	6
-  5352     0679  0187               	clrf	7
-  5353     067A  0141               	movlb	1	;Select bank 1
-  5354     067B  0BA1               	decfsz	linecount_inner& (0+127),f	;Decrement linecount and store in linecount, skip next instructio
+  5350     0677  0086               	movwf	6
+  5351     0678  0187               	clrf	7
+  5352     0679  0141               	movlb	1	;Select bank 1
+  5353     067A  0BA1               	decfsz	linecount_inner& (0+127),f	;Decrement linecount and store in linecount, skip next instructio
       +                          n if zero
-  5355     067C  2E85               	goto	long_continue_sync	;Continue sync pulse if linecount not zero
-  5356                           
-  5357                           ;If inner linecount is zero
-  5358     067D  3002               	movlw	2
-  5359     067E  00A1               	movwf	linecount_inner& (0+127)
-  5360     067F  0BA0               	decfsz	linecount_outer& (0+127),f	;If second time counting down from 240
-  5361     0680  2E89               	goto	short_continue_sync
-  5362                           
-  5363                           ;If outer linecount is zero
-  5364     0681  3002               	movlw	2
-  5365     0682  00A0               	movwf	linecount_outer& (0+127)
-  5366     0683  17A2               	bsf	v_counter& (0+127),7
-  5367     0684  2E8D               	goto	shorter_continue_sync
-  5368     0685                     long_continue_sync:	
-  5369                           ;GOTO vblank
+  5354     067B  2E84               	goto	long_continue_sync	;Continue sync pulse if linecount not zero
+  5355                           
+  5356                           ;If inner linecount is zero
+  5357     067C  3002               	movlw	2
+  5358     067D  00A1               	movwf	linecount_inner& (0+127)
+  5359     067E  0BA0               	decfsz	linecount_outer& (0+127),f	;If second time counting down from 240
+  5360     067F  2E88               	goto	short_continue_sync
+  5361                           
+  5362                           ;If outer linecount is zero
+  5363     0680  3002               	movlw	2
+  5364     0681  00A0               	movwf	linecount_outer& (0+127)
+  5365     0682  17A2               	bsf	v_counter& (0+127),7
+  5366     0683  2E8C               	goto	shorter_continue_sync
+  5367     0684                     long_continue_sync:	
+  5368                           ;GOTO vblank
+  5369                           
   5370                           
-  5371                           
-  5372                           ;After 15 cycles
+  5371                           ;After 15 cycles
+  5372     0684  0000               	nop
   5373     0685  0000               	nop
   5374     0686  0000               	nop
   5375     0687  0000               	nop
-  5376     0688  0000               	nop
-  5377     0689                     short_continue_sync:
-  5378                           
-  5379                           ;After 19 cycles
+  5376     0688                     short_continue_sync:
+  5377                           
+  5378                           ;After 19 cycles
+  5379     0688  0000               	nop
   5380     0689  0000               	nop
   5381     068A  0000               	nop
   5382     068B  0000               	nop
-  5383     068C  0000               	nop
-  5384     068D                     shorter_continue_sync:
-  5385                           
-  5386                           ;After 23 cycles
-  5387     068D  0140               	movlb	0	;Select bank 0
-  5388                           
-  5389                           ;------------- 12 Instruction back porch (48 pixel clocks) ------------
-  5390     068E  171A               	bsf	26,6
+  5383     068C                     shorter_continue_sync:
+  5384                           
+  5385                           ;After 23 cycles
+  5386     068C  0140               	movlb	0	;Select bank 0
+  5387                           
+  5388                           ;------------- 12 Instruction back porch (48 pixel clocks) ------------
+  5389     068D  171A               	bsf	26,6
+  5390     068E  0000               	nop
   5391     068F  0000               	nop
   5392     0690  0000               	nop
   5393     0691  0000               	nop
@@ -5404,10 +5404,10 @@ Microchip MPLAB XC8 Assembler V3.10 build 20250813170317
   5397     0695  0000               	nop
   5398     0696  0000               	nop
   5399     0697  0000               	nop
-  5400     0698  0000               	nop
-  5401     0699  0000               	nop
-  5402                           
-  5403                           ;------------- Output 80 pixels with 160 instructions (640 pixel clocks) ------------
+  5400     0698  0016               	moviw fsr1++
+  5401                           
+  5402                           ;------------- Output 80 pixels with 160 instructions (640 pixel clocks) ------------
+  5403     0699  009A               	movwf	26
   5404     069A  0016               	moviw fsr1++
   5405     069B  009A               	movwf	26
   5406     069C  0016               	moviw fsr1++
@@ -5572,7 +5572,7 @@ Microchip MPLAB XC8 Assembler V3.10 build 20250813170317
   5565     073B                     vblank:
   5566                           
   5567 ;;;FINISH LAST LINE AS EMPTY LINE
-  5568                           ;Finish last sync pulse, got here with 4 cycles
+  5568                           ;Finish last sync pulse, got here with 5 cycles
   5569     073B  13A2               	bcf	v_counter& (0+127),7
   5570     073C  0000               	nop
   5571     073D  0000               	nop
@@ -5591,11 +5591,11 @@ Microchip MPLAB XC8 Assembler V3.10 build 20250813170317
   5584     074A  0000               	nop
   5585     074B  0000               	nop
   5586     074C  0000               	nop
-  5587     074D  0000               	nop
-  5588     074E  0140               	movlb	0	;Select bank 0
-  5589                           
-  5590                           ;------------- 12 Instruction back porch (48 pixel clocks) ------------
-  5591     074F  171A               	bsf	26,6
+  5587     074D  0140               	movlb	0	;Select bank 0
+  5588                           
+  5589                           ;------------- 12 Instruction back porch (48 pixel clocks) ------------
+  5590     074E  171A               	bsf	26,6
+  5591     074F  0000               	nop
   5592     0750  0000               	nop
   5593     0751  0000               	nop
   5594     0752  0000               	nop
@@ -5606,9 +5606,9 @@ Microchip MPLAB XC8 Assembler V3.10 build 20250813170317
   5599     0757  0000               	nop
   5600     0758  0000               	nop
   5601     0759  0000               	nop
-  5602     075A  0000               	nop
-  5603                           
-  5604                           ;------------- Output 80 pixels with 160 instructions (640 pixel clocks) ------------
+  5602                           
+  5603                           ;------------- Output 80 pixels with 160 instructions (640 pixel clocks) ------------
+  5604     075A  0000               	nop
   5605     075B  0000               	nop
   5606     075C  0000               	nop
   5607     075D  0000               	nop
@@ -5767,20 +5767,22 @@ Microchip MPLAB XC8 Assembler V3.10 build 20250813170317
   5760     07F6  0000               	nop
   5761     07F7  0000               	nop
   5762     07F8  0000               	nop
-  5763     07F9  0000               	nop
-  5764     07FA  0000               	nop
+  5763     07F9  300A               	movlw	10
+  5764     07FA  00A2               	movwf	v_counter& (0+127)
   5765                           
-  5766                           ;do horizontal lines
-  5767     07FB  2E6D               	goto	frame
-  5768     07FC  0008               	return
+  5766                           ;-------END OF FIRST VBLANK LINE---------;
+  5767                           ;Do horizontal line
+  5768                           ;DECFSZ v_counter
+  5769     07FB  2E6D               	goto	frame
+  5770     07FC  0008               	return
 
 
 Microchip Technology PIC Macro Assembler V3.10 build 20250813170317 
-Symbol Table                                                                                               Wed Jul  1 17:35:23 2026
+Symbol Table                                                                                               Wed Jul  1 18:11:49 2026
 
                             LATC 001A                             FSR1H 0007                             FSR1L 0006  
-                           frame 066D             shorter_continue_sync 068D                            vblank 073B  
-             short_continue_sync 0689                        ARRAY_ADDR 0020                       INNER_LOOPS 0002  
-                     OUTER_LOOPS 0002                long_continue_sync 0685                      _line_buffer 0020  
-                       _drawLine 0666                         line_loop 066D                   linecount_inner 00A1  
-                 linecount_outer 00A0                         v_counter 00A2  
+                           frame 066D             shorter_continue_sync 068C                            vblank 073B  
+             short_continue_sync 0688                        ARRAY_ADDR 0020                       INNER_LOOPS 0002  
+                   V_FRONT_PORCH 000B                       OUTER_LOOPS 0002                long_continue_sync 0684  
+                    _line_buffer 0020                         _drawLine 0666                         line_loop 066D  
+                 linecount_inner 00A1                   linecount_outer 00A0                         v_counter 00A2  

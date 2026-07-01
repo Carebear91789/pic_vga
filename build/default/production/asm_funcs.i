@@ -6016,6 +6016,8 @@ PSECT udata_bank1
  DS 1
     v_counter:
  DS 1
+    v_state:
+ DS 1
 
 
 PSECT mainCode, class=CODE, delta=2
@@ -6028,13 +6030,14 @@ _drawLine:
     MOVLW INNER_LOOPS
     MOVWF ((linecount_inner) and 07Fh) ; inner counter (240 lines each)
     CLRF ((v_counter) and 07Fh)
+    CLRF ((v_state) and 07Fh)
 
     MOVLB 0x00 ;Select bank 0
     frame:
 
     line_loop:
     ;------------- 4 Instruction front porch (16 pixel clocks) ------------
-    ;; 2 instructions from GOTO at EOF
+    ;; 3 instructions from MOVWF and GOTO at EOL
     MOVLW ARRAY_ADDR
 
     ;------------- 24 Instruction sync pulse (96 pixel clocks) ------------
@@ -6461,13 +6464,224 @@ vblank:
     NOP
     NOP
     NOP
-    NOP
-    NOP
-    NOP
-    NOP
+    MOVLB 0x01 ;Select bank 1
+    MOVLW (V_FRONT_PORCH - 1)
+    MOVWF ((v_counter) and 07Fh)
+    MOVLB 0x00 ;Select bank 1
 
-    ;do horizontal lines
+    ;-------END OF FIRST VBLANK LINE---------;
 
+    horizontal_line:
+    ;4 instruction front porch
+    NOP
+    NOP
+    NOP
+    NOP
+    ;24 instruction sync
+    BCF ((LATC) and 07Fh), 6
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    ;12 instruction back porch
+    BSF ((LATC) and 07Fh), 6
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    ;160 instruction active video (-10)
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    ;-----------150 instructions
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    ;-----------160 instructions
+
+
+
+    NOP
     GOTO frame
 
     RETURN

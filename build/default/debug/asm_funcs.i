@@ -5995,7 +5995,7 @@ ENDM
 GLOBAL _drawLine
 GLOBAL _line_buffer
 
-;Number of displayed lines = inner * outer - 1
+;Number of displayed lines = inner * outer
 INNER_LOOPS EQU 2
 OUTER_LOOPS EQU 2
 
@@ -6034,18 +6034,16 @@ _drawLine:
 
     line_loop:
     ;------------- 4 Instruction front porch (16 pixel clocks) ------------
-    ;; 2 instructions from GOTO at EOF
+    ;; 3 instructions from MOVWF and GOTO at EOL
     MOVLW ARRAY_ADDR
-    NOP
-
 
     ;------------- 24 Instruction sync pulse (96 pixel clocks) ------------
 
     BCF ((LATC) and 07Fh), 6
+    MOVLB 0x01 ;Select bank 1
     BTFSC ((v_counter) and 07Fh), 7 ;Skip next instruction (NOP) if bit 7 is zero
     GOTO vblank
-    NOP
-    NOP
+    MOVLB 0x00 ;Select bank 0
     NOP
     NOP
     NOP
@@ -6100,10 +6098,11 @@ shorter_continue_sync: ;After 23 cycles
     NOP
     NOP
     NOP
-    NOP
+    MOVIW FSR1++
 
     ;------------- Output 80 pixels with 160 instructions (640 pixel clocks) ------------
 
+    MOVWF ((LATC) and 07Fh)
     MOVIW FSR1++
     MOVWF ((LATC) and 07Fh)
     MOVIW FSR1++
@@ -6268,9 +6267,8 @@ shorter_continue_sync: ;After 23 cycles
 
 vblank:
     ;;;FINISH LAST LINE AS EMPTY LINE
-    ;Finish last sync pulse, got here with 4 cycles
+    ;Finish last sync pulse, got here with 5 cycles
     BCF ((v_counter) and 07Fh), 7
-    NOP
     NOP
     NOP
     NOP
@@ -6465,9 +6463,12 @@ vblank:
     NOP
     NOP
     NOP
-    NOP
+    MOVLW (V_FRONT_PORCH - 1)
+    MOVWF ((v_counter) and 07Fh)
+    ;-------END OF FIRST VBLANK LINE---------;
 
-    ;do horizontal lines
+    ;Do horizontal line
+    ;DECFSZ v_counter
 
     GOTO frame
 

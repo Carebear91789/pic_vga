@@ -24,6 +24,8 @@ PSECT udata_bank1
 	DS 1
     v_counter:
 	DS 1
+    v_state:
+	DS 1
     
 
 PSECT mainCode, class=CODE, delta=2
@@ -36,13 +38,14 @@ _drawLine:
     MOVLW   INNER_LOOPS
     MOVWF   BANKMASK(linecount_inner)	    ; inner counter (240 lines each)
     CLRF    BANKMASK(v_counter)
+    CLRF    BANKMASK(v_state)
     
     MOVLB   0x00			    ;Select bank 0
     frame:
     
     line_loop:
     ;------------- 4 Instruction front porch (16 pixel clocks) ------------
-    ;; 2 instructions from GOTO at EOF
+    ;; 3 instructions from MOVWF and GOTO at EOL
     MOVLW   ARRAY_ADDR
     
     ;------------- 24 Instruction sync pulse (96 pixel clocks) ------------
@@ -469,13 +472,224 @@ vblank:
     NOP
     NOP
     NOP
-    NOP
-    NOP
-    NOP
-    NOP
+    MOVLB   0x01    ;Select bank 1
+    MOVLW   (V_FRONT_PORCH - 1)
+    MOVWF   BANKMASK(v_counter)
+    MOVLB   0x00    ;Select bank 1
     
-    ;do horizontal lines
+    ;-------END OF FIRST VBLANK LINE---------;
 
+    horizontal_line:
+    ;4 instruction front porch
+    NOP
+    NOP
+    NOP
+    NOP
+    ;24 instruction sync
+    BCF BANKMASK(LATC),  6
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    ;12 instruction back porch
+    BSF BANKMASK(LATC),  6
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    ;160 instruction active video (-10)
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    ;-----------150 instructions
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    ;-----------160 instructions
+    
+    
+    //3 instruction return to frame
+    NOP
     GOTO frame
     
     RETURN

@@ -629,9 +629,9 @@ Version 4.0 HI-TECH Software Intermediate Code
 [e $U 524  ]
 [e :U 521 ]
 {
-"46
-[; ;vga_test_full_signal.c: 46:         line[i] = 63 + 64 + 128;
-[e = *U + _line * -> _i `ux -> -> # *U _line `ui `ux -> + + -> 63 `i -> 64 `i -> 128 `i `uc ]
+"45
+[; ;vga_test_full_signal.c: 45:         line[i] = (i%64) + 64 + 128;
+[e = *U + _line * -> _i `ux -> -> # *U _line `ui `ux -> + + % -> _i `i -> 64 `i -> 64 `i -> 128 `i `uc ]
 "47
 [; ;vga_test_full_signal.c: 47:     }
 }
