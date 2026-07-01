@@ -5995,7 +5995,7 @@ ENDM
 GLOBAL _drawLine
 GLOBAL _line_buffer
 
-;Number of displayed lines = inner * outer - 1
+;Number of displayed lines = inner * outer
 INNER_LOOPS EQU 2
 OUTER_LOOPS EQU 2
 
@@ -6036,8 +6036,6 @@ _drawLine:
     ;------------- 4 Instruction front porch (16 pixel clocks) ------------
     ;; 2 instructions from GOTO at EOF
     MOVLW ARRAY_ADDR
-    NOP
-
 
     ;------------- 24 Instruction sync pulse (96 pixel clocks) ------------
 
@@ -6100,10 +6098,11 @@ shorter_continue_sync: ;After 23 cycles
     NOP
     NOP
     NOP
-    NOP
+    MOVIW FSR1++
 
     ;------------- Output 80 pixels with 160 instructions (640 pixel clocks) ------------
 
+    MOVWF ((LATC) and 07Fh)
     MOVIW FSR1++
     MOVWF ((LATC) and 07Fh)
     MOVIW FSR1++
@@ -6305,6 +6304,7 @@ vblank:
     NOP
 
     ;------------- Output 80 pixels with 160 instructions (640 pixel clocks) ------------
+    NOP
     NOP
     NOP
     NOP

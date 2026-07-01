@@ -42,8 +42,8 @@ extern void drawLine(uint8_t *buf);
 
 void fillLineBuffer(uint8_t line[], uint8_t size) {
     for (uint8_t i = 0; i < size; i++) {
-        line[i] = (i%64) + 64 + 128;
-        //line[i] = 63 + 64 + 128;
+        //line[i] = (i%64) + 64 + 128;
+        line[i] = 63 + 64 + 128;
     }
 }
 
