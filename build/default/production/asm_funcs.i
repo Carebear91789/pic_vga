@@ -5995,8 +5995,15 @@ ENDM
 GLOBAL _drawLine
 GLOBAL _line_buffer
 
+
 INNER_LOOPS EQU 2
 OUTER_LOOPS EQU 2
+
+V_FRONT_PORCH EQU 11
+V_SYNC_PULSE EQU 2
+V_BACK_PORCH EQU 31
+
+ARRAY_ADDR EQU 0x20
 
 PSECT udata_bank0
     _line_buffer:
@@ -6007,28 +6014,28 @@ PSECT udata_bank1
  DS 1
     linecount_inner:
  DS 1
-    state:
+    v_counter:
  DS 1
 
 
 PSECT mainCode, class=CODE, delta=2
 
 _drawLine:
-    BANKSEL linecount_outer
+    MOVLB 0x01 ;Select bank 1
 
     MOVLW OUTER_LOOPS
     MOVWF ((linecount_outer) and 07Fh) ; outer counter (2 passes)
     MOVLW INNER_LOOPS
     MOVWF ((linecount_inner) and 07Fh) ; inner counter (240 lines each)
+    CLRF ((v_counter) and 07Fh)
 
-
-    BANKSEL LATC
+    MOVLB 0x00 ;Select bank 0
     frame:
 
     line_loop:
     ;------------- 4 Instruction front porch (16 pixel clocks) ------------
     ;; 2 instructions from GOTO at EOF
-    MOVLW 0x20
+    MOVLW ARRAY_ADDR
 
 
     ;------------- 24 Instruction sync pulse (96 pixel clocks) ------------
@@ -6038,7 +6045,7 @@ _drawLine:
     CLRF FSR1H
 
 
-    BANKSEL linecount_outer
+    MOVLB 0x01 ;Select bank 1
     DECFSZ ((linecount_inner) and 07Fh), 1 ;Decrement linecount and store in linecount, skip next instruction if zero
     GOTO long_continue_sync ;Continue sync pulse if linecount not zero
 
@@ -6065,7 +6072,6 @@ short_continue_sync: ;After 11 cycles
     NOP
     NOP
 
-
 shorter_continue_sync: ;After 14 cycles
     NOP
     NOP
@@ -6076,7 +6082,7 @@ shorter_continue_sync: ;After 14 cycles
     NOP
     NOP
     NOP
-    BANKSEL LATC
+    MOVLB 0x00 ;Select bank 0
 
     ;------------- 12 Instruction back porch (48 pixel clocks) ------------
 
@@ -6269,7 +6275,7 @@ vblank:
     NOP
     NOP
     NOP
-    BANKSEL LATC
+    MOVLB 0x00 ;Select bank 0
 
     ;------------- 12 Instruction back porch (48 pixel clocks) ------------
 

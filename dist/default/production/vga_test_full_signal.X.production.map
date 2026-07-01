@@ -4,12 +4,12 @@ Linker command line:
 
 -W-3 \
   --edf=C:/Program Files/Microchip/MPLABX/v6.30/packs/Microchip/PIC16F1xxxx_DFP/1.29.444/xc8\pic\dat\20251218141021_en.msgs \
-  -cn -h+dist/default/debug\vga_test_full_signal.X.debug.sym \
-  --cmf=dist/default/debug\vga_test_full_signal.X.debug.cmf -z -Q16F15244 \
-  -oC:\Users\ad2la\AppData\Local\Temp\xcAs16xc.0\driver_tmp_3.o \
+  -cn -h+dist/default/production\vga_test_full_signal.X.production.sym \
+  --cmf=dist/default/production\vga_test_full_signal.X.production.cmf -z \
+  -Q16F15244 -oC:\Users\ad2la\AppData\Local\Temp\xcAs1pdo.0\driver_tmp_3.o \
   --defsym=__MPLAB_BUILD=1 --fixupoverflow=error \
-  -Mdist/default/debug/vga_test_full_signal.X.debug.map \
-  --md=C:\Users\ad2la\AppData\Local\Temp\xcAs16xc.0\driver_tmp_0.dat -E1 \
+  -Mdist/default/production/vga_test_full_signal.X.production.map \
+  --md=C:\Users\ad2la\AppData\Local\Temp\xcAs1pdo.0\driver_tmp_0.dat -E1 \
   -ver=XC8 Compiler -ACODE=00h-07FFhx2 -ASTRCODE=00h-0FFFh \
   -ASTRING=00h-0FFhx16 -ACONST=00h-0FFhx16 -AENTRY=00h-0FFhx16 \
   -ACOMMON=070h-07Fh -ABANK0=020h-06Fh -ABANK1=0A0h-0EFh \
@@ -42,9 +42,9 @@ Linker command line:
   -DCODE=2 -DSTRCODE=2 -DSTRING=2 -DCONST=2 -DENTRY=2 \
   -preset_vec=00h,intentry,sivt,init,end_init -ppowerup=CODE -pcinit=CODE \
   -pfunctab=ENTRY -k \
-  C:\Users\ad2la\AppData\Local\Temp\xcAs16xc.0\driver_tmp_12.o \
-  dist/default/debug\vga_test_full_signal.X.debug.o \
-  build/default/debug/asm_funcs.o 
+  C:\Users\ad2la\AppData\Local\Temp\xcAs1pdo.0\driver_tmp_12.o \
+  dist/default/production\vga_test_full_signal.X.production.o \
+  build/default/production/asm_funcs.o 
 
 Object code version is 3.11
 
@@ -53,29 +53,29 @@ Machine type is 16F15244
 
 
                 Name                               Link     Load   Length Selector   Space Scale
-C:\Users\ad2la\AppData\Local\Temp\xcAs16xc.0\driver_tmp_12.o
-                end_init                              3        3        2        0       0
-                reset_vec                             0        0        3        0       0
+C:\Users\ad2la\AppData\Local\Temp\xcAs1pdo.0\driver_tmp_12.o
+                end_init                              2        2        2        0       0
+                reset_vec                             0        0        2        0       0
                 config                             8007     8007        5        0       4
-dist/default/debug\vga_test_full_signal.X.debug.o
+dist/default/production\vga_test_full_signal.X.production.o
                 cinit                               7FD      7FD        3      FFA       0
                 config                             8007     8007        5        0       4
-                text1                               644      644       15      C88       0
-                maintext                            659      659       1A      CB2       0
+                text1                               643      643       15      C86       0
+                maintext                            658      658       1A      CB0       0
                 cstackCOMMON                         70       70        4       70       1
-build/default/debug/asm_funcs.o
-                mainCode                            673      673      18A      CE6       0
+build/default/production/asm_funcs.o
+                mainCode                            672      672      18B      CE4       0
                 udata_bank1                          A0       A0        3       A0       1
                 udata_bank0                          20       20       50       20       1
 
 TOTAL           Name                               Link     Load   Length     Space
         CLASS   CODE           
-                end_init                              3        3        2         0
+                end_init                              2        2        2         0
                 cinit                               7FD      7FD        3         0
-                reset_vec                             0        0        3         0
-                text1                               644      644       15         0
-                maintext                            659      659       1A         0
-                mainCode                            673      673      18A         0
+                reset_vec                             0        0        2         0
+                text1                               643      643       15         0
+                maintext                            658      658       1A         0
+                mainCode                            672      672      18B         0
 
         CLASS   STRCODE        
 
@@ -368,13 +368,13 @@ TOTAL           Name                               Link     Load   Length     Sp
 
 SEGMENTS        Name                           Load    Length   Top    Selector   Space  Class     Delta
 
-                reset_vec                      000000  000005  000005         0       0  CODE        2
+                reset_vec                      000000  000004  000004         0       0  CODE        2
                 udata_bank0                    000020  000050  000070        20       1  BANK0       1
                 cstackCOMMON                   000070  000004  000074        70       1  COMMON      1
                 udata_bank1                    0000A0  000003  0000A3        A0       1  BANK1       1
-                text1                          000644  000015  000659       C88       0  CODE        2
-                maintext                       000659  00001A  000673       CB2       0  CODE        2
-                mainCode                       000673  00018A  0007FD       CE6       0  CODE        2
+                text1                          000643  000015  000658       C86       0  CODE        2
+                maintext                       000658  00001A  000672       CB0       0  CODE        2
+                mainCode                       000672  00018B  0007FD       CE4       0  CODE        2
                 cinit                          0007FD  000003  000800       FFA       0  CODE        2
 
 
@@ -388,12 +388,12 @@ UNUSED ADDRESS RANGES
         BANK5            002A0-002EF              50           1
         BANK6            00320-0032F              10           1
         BIGRAM           02000-021EF             1F0           1
-        CODE             00005-00643             63F           2
+        CODE             00004-00642             63F           2
                          00800-00FFF             800
         COMMON           00074-0007D               A           1
-        CONST            00005-00643             100           2
+        CONST            00004-00642             100           2
                          00800-00FFF             100
-        ENTRY            00005-00643             100           2
+        ENTRY            00004-00642             100           2
                          00800-00FFF             100
         IDLOC            08000-08003               4           2
         RAM              000A3-000EF              4D           1
@@ -466,9 +466,9 @@ UNUSED ADDRESS RANGES
         SFR7             00380-003EF              70           1
         SFR8             00400-0046F              70           1
         SFR9             00480-004EF              70           1
-        STRCODE          00005-00643             63F           2
+        STRCODE          00004-00642             63F           2
                          00800-00FFF             800
-        STRING           00005-00643             100           2
+        STRING           00004-00642             100           2
                          00800-00FFF             100
 
                                   Symbol Table
@@ -553,17 +553,17 @@ __Hconfig                config       0800C
 __HcstackCOMMON          cstackCOMMON 00000
 __Hdata                  data         00000
 __Heeprom_data           eeprom_data  00000
-__Hend_init              end_init     00005
+__Hend_init              end_init     00004
 __Hfunctab               functab      00000
 __Hheap                  heap         00000
-__Hinit                  init         00003
-__Hintentry              intentry     00003
+__Hinit                  init         00002
+__Hintentry              intentry     00002
 __HmainCode              mainCode     00000
 __Hmaintext              maintext     00000
 __Hpa_nodes0             pa_nodes0    00000
 __Hpowerup               powerup      00000
 __Hram                   ram          00000
-__Hreset_vec             reset_vec    00003
+__Hreset_vec             reset_vec    00002
 __Hsfr0                  sfr0         00000
 __Hsfr1                  sfr1         00000
 __Hsfr10                 sfr10        00000
@@ -628,7 +628,7 @@ __Hsfr63                 sfr63        00000
 __Hsfr7                  sfr7         00000
 __Hsfr8                  sfr8         00000
 __Hsfr9                  sfr9         00000
-__Hsivt                  sivt         00003
+__Hsivt                  sivt         00002
 __Hspace_0               (abs)        00800
 __Hspace_1               (abs)        000A3
 __Hspace_2               (abs)        00000
@@ -721,11 +721,11 @@ __Lconfig                config       00000
 __LcstackCOMMON          cstackCOMMON 00000
 __Ldata                  data         00000
 __Leeprom_data           eeprom_data  00000
-__Lend_init              end_init     00003
+__Lend_init              end_init     00002
 __Lfunctab               functab      00000
 __Lheap                  heap         00000
-__Linit                  init         00003
-__Lintentry              intentry     00003
+__Linit                  init         00002
+__Lintentry              intentry     00002
 __LmainCode              mainCode     00000
 __Lmaintext              maintext     00000
 __Lpa_nodes0             pa_nodes0    00000
@@ -796,7 +796,7 @@ __Lsfr63                 sfr63        00000
 __Lsfr7                  sfr7         00000
 __Lsfr8                  sfr8         00000
 __Lsfr9                  sfr9         00000
-__Lsivt                  sivt         00003
+__Lsivt                  sivt         00002
 __Lspace_0               (abs)        00000
 __Lspace_1               (abs)        00000
 __Lspace_2               (abs)        00000
@@ -828,17 +828,17 @@ ___stack_lo              stack        00000
 ___stackhi               (abs)        00000
 ___stacklo               (abs)        00000
 __end_of__initialization cinit        007FD
-__end_of_fillLineBuffer  text1        00659
-__end_of_main            maintext     00673
+__end_of_fillLineBuffer  text1        00658
+__end_of_main            maintext     00672
 __initialization         cinit        007FD
 __pcstackCOMMON          cstackCOMMON 00070
-__pmaintext              maintext     00659
-__ptext1                 text1        00644
-_drawLine                mainCode     00673
+__pmaintext              maintext     00658
+__ptext1                 text1        00643
+_drawLine                mainCode     00672
 _drawLine$0              cstackCOMMON 00070
-_fillLineBuffer          text1        00644
+_fillLineBuffer          text1        00643
 _line_buffer             udata_bank0  00020
-_main                    maintext     00659
+_main                    maintext     00658
 btemp                    (abs)        0007E
 btemp0                   (abs)        0007E
 btemp1                   (abs)        0007F
@@ -854,7 +854,7 @@ intlevel4                functab      00000
 intlevel5                functab      00000
 ltemp0a                  (abs)        00080
 reset_vec                reset_vec    00000
-start                    init         00003
+start                    init         00002
 start_initialization     cinit        007FD
 ttemp0a                  (abs)        0007F
 wtemp0                   (abs)        0007E
@@ -870,8 +870,8 @@ shared
 shared estimated size: 1
 
 vga_test_full_signal.c
-		_main          		CODE           	0659	0000	26
-		_fillLineBuffer		CODE           	0644	0000	21
+		_main          		CODE           	0658	0000	26
+		_fillLineBuffer		CODE           	0643	0000	21
 
 vga_test_full_signal.c estimated size: 47
 

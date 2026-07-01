@@ -2,7 +2,17 @@
     
 GLOBAL _drawLine
 GLOBAL _line_buffer
-    
+
+//Number of displayed lines = inner * outer - 1
+INNER_LOOPS	EQU	2
+OUTER_LOOPS	EQU	2
+	
+V_FRONT_PORCH	EQU	11
+V_SYNC_PULSE	EQU	2
+V_BACK_PORCH	EQU	31
+	
+ARRAY_ADDR	EQU	0x20
+
 PSECT udata_bank0
     _line_buffer:
 	DS 80
@@ -12,70 +22,80 @@ PSECT udata_bank1
 	DS 1
     linecount_inner:
 	DS 1
+    v_counter:
+	DS 1
     
 
 PSECT mainCode, class=CODE, delta=2
 
 _drawLine:
-    BANKSEL linecount_outer
+    MOVLB   0x01			    ;Select bank 1
     
-    MOVLW   2
-    MOVWF   BANKMASK(linecount_outer)   ; outer counter (2 passes)
-    MOVLW   240
-    MOVWF   BANKMASK(linecount_inner)     ; inner counter (240 lines each)
+    MOVLW   OUTER_LOOPS
+    MOVWF   BANKMASK(linecount_outer)	    ; outer counter (2 passes)
+    MOVLW   INNER_LOOPS
+    MOVWF   BANKMASK(linecount_inner)	    ; inner counter (240 lines each)
+    CLRF    BANKMASK(v_counter)
     
-    BANKSEL LATC
+    MOVLB   0x00			    ;Select bank 0
     frame:
     
     line_loop:
     ;------------- 4 Instruction front porch (16 pixel clocks) ------------
     ;; 2 instructions from GOTO at EOF
-    MOVLW 0x20
+    MOVLW   ARRAY_ADDR
     
     
     ;------------- 24 Instruction sync pulse (96 pixel clocks) ------------
 
-    BCF BANKMASK(LATC), 6
-    MOVWF FSR1L
-    CLRF FSR1H
-    /*DECFSZ BANKMASK(linecount_inner), 1	;Decrement linecount and store in linecount, skip next instruction if zero
-    GOTO long_continue_sync			;Continue sync pulse if linecount not zero
+    BCF	BANKMASK(LATC), 6
+    MOVWF   FSR1L
+    CLRF    FSR1H
+    
+    
+    MOVLB   0x01				;Select bank 1
+    DECFSZ  BANKMASK(linecount_inner), 1	;Decrement linecount and store in linecount, skip next instruction if zero
+    GOTO    long_continue_sync			;Continue sync pulse if linecount not zero
     
     ;If inner linecount is zero
-    MOVLW   240
+    MOVLW   INNER_LOOPS
     MOVWF   BANKMASK(linecount_inner)
     DECFSZ  BANKMASK(linecount_outer), 1	;If second time counting down from 240
     GOTO    short_continue_sync
     
     ;If outer linecount is zero
-    GOTO    vblank*/
-long_continue_sync:    
+    MOVLW   OUTER_LOOPS
+    MOVWF   BANKMASK(linecount_outer)
+    ;GOTO    shorter_continue_sync
+    GOTO    vblank
+    
+long_continue_sync:   ;After 7 cycles 
     NOP
     NOP
     NOP
     NOP
+    
+short_continue_sync:	;After 11 cycles
     NOP
     NOP
     NOP
+    
+shorter_continue_sync:	;After 14 cycles
     NOP
     NOP
     NOP
-short_continue_sync:
     NOP
     NOP
     NOP
     NOP
     NOP 
     NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
+    MOVLB   0x00    ;Select bank 0
     
     ;------------- 12 Instruction back porch (48 pixel clocks) ------------
    
     BSF BANKMASK(LATC), 6
+    NOP
     NOP
     NOP
     NOP
@@ -257,17 +277,18 @@ vblank:
     NOP
     NOP
     NOP
+    NOP
+    NOP
+    NOP
+    NOP
     NOP 
     NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
+    MOVLB   0x00    ;Select bank 0
     
     ;------------- 12 Instruction back porch (48 pixel clocks) ------------
    
     BSF BANKMASK(LATC), 6
+    NOP
     NOP
     NOP
     NOP
@@ -434,7 +455,6 @@ vblank:
     NOP
     NOP
     NOP
-    ;Commented 6 for the 6 instructions below
     NOP
     NOP
     NOP
@@ -442,11 +462,8 @@ vblank:
     NOP
     NOP
     
-    ;do horizontal line
-    ;MOVLW   240
-    ;MOVWF   BANKMASK(linecount_inner)
-    ;MOVLW   2
-    ;MOVWF   BANKMASK(linecount_outer)
+    ;do horizontal lines
+
     GOTO frame
     
     RETURN
