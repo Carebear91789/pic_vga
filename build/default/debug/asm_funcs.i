@@ -5995,8 +5995,15 @@ ENDM
 GLOBAL _drawLine
 GLOBAL _line_buffer
 
+;Number of displayed lines = inner * outer - 1
 INNER_LOOPS EQU 2
 OUTER_LOOPS EQU 2
+
+V_FRONT_PORCH EQU 11
+V_SYNC_PULSE EQU 2
+V_BACK_PORCH EQU 31
+
+ARRAY_ADDR EQU 0x20
 
 PSECT udata_bank0
     _line_buffer:
@@ -6007,38 +6014,48 @@ PSECT udata_bank1
  DS 1
     linecount_inner:
  DS 1
-    state:
+    v_counter:
  DS 1
 
 
 PSECT mainCode, class=CODE, delta=2
 
 _drawLine:
-    BANKSEL linecount_outer
+    MOVLB 0x01 ;Select bank 1
 
     MOVLW OUTER_LOOPS
     MOVWF ((linecount_outer) and 07Fh) ; outer counter (2 passes)
     MOVLW INNER_LOOPS
     MOVWF ((linecount_inner) and 07Fh) ; inner counter (240 lines each)
+    CLRF ((v_counter) and 07Fh)
 
-
-    BANKSEL LATC
+    MOVLB 0x00 ;Select bank 0
     frame:
 
     line_loop:
     ;------------- 4 Instruction front porch (16 pixel clocks) ------------
     ;; 2 instructions from GOTO at EOF
-    MOVLW 0x20
+    MOVLW ARRAY_ADDR
+    NOP
 
 
     ;------------- 24 Instruction sync pulse (96 pixel clocks) ------------
 
     BCF ((LATC) and 07Fh), 6
+    BTFSC ((v_counter) and 07Fh), 7 ;Skip next instruction (NOP) if bit 7 is zero
+    GOTO vblank
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+
     MOVWF FSR1L
     CLRF FSR1H
 
 
-    BANKSEL linecount_outer
+    MOVLB 0x01 ;Select bank 1
     DECFSZ ((linecount_inner) and 07Fh), 1 ;Decrement linecount and store in linecount, skip next instruction if zero
     GOTO long_continue_sync ;Continue sync pulse if linecount not zero
 
@@ -6051,32 +6068,24 @@ _drawLine:
     ;If outer linecount is zero
     MOVLW OUTER_LOOPS
     MOVWF ((linecount_outer) and 07Fh)
-    ;GOTO shorter_continue_sync
-    GOTO vblank
+    BSF ((v_counter) and 07Fh), 7
+    GOTO shorter_continue_sync
+    ;GOTO vblank
 
-long_continue_sync: ;After 7 cycles
+long_continue_sync: ;After 15 cycles
     NOP
-    NOP
-    NOP
-    NOP
-
-short_continue_sync: ;After 11 cycles
     NOP
     NOP
     NOP
 
+short_continue_sync: ;After 19 cycles
+    NOP
+    NOP
+    NOP
+    NOP
 
-shorter_continue_sync: ;After 14 cycles
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    BANKSEL LATC
+shorter_continue_sync: ;After 23 cycles
+    MOVLB 0x00 ;Select bank 0
 
     ;------------- 12 Instruction back porch (48 pixel clocks) ------------
 
@@ -6259,7 +6268,8 @@ shorter_continue_sync: ;After 14 cycles
 
 vblank:
     ;;;FINISH LAST LINE AS EMPTY LINE
-    ;Finish last sync pulse
+    ;Finish last sync pulse, got here with 4 cycles
+    BCF ((v_counter) and 07Fh), 7
     NOP
     NOP
     NOP
@@ -6269,7 +6279,16 @@ vblank:
     NOP
     NOP
     NOP
-    BANKSEL LATC
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    MOVLB 0x00 ;Select bank 0
 
     ;------------- 12 Instruction back porch (48 pixel clocks) ------------
 

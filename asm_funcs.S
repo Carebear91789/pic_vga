@@ -3,7 +3,7 @@
 GLOBAL _drawLine
 GLOBAL _line_buffer
 
-//Number of displayed lines = inner * outer - 1
+;Number of displayed lines = inner * outer - 1
 INNER_LOOPS	EQU	2
 OUTER_LOOPS	EQU	2
 	
@@ -44,11 +44,21 @@ _drawLine:
     ;------------- 4 Instruction front porch (16 pixel clocks) ------------
     ;; 2 instructions from GOTO at EOF
     MOVLW   ARRAY_ADDR
+    NOP
     
     
     ;------------- 24 Instruction sync pulse (96 pixel clocks) ------------
 
-    BCF	BANKMASK(LATC), 6
+    BCF	    BANKMASK(LATC), 6
+    MOVLB   0x01			;Select bank 1
+    BTFSC   BANKMASK(v_counter), 7	;Skip next instruction (NOP) if bit 7 is zero
+    GOTO    vblank
+    MOVLB   0x00			;Select bank 0
+    NOP
+    NOP
+    NOP 
+    NOP
+    
     MOVWF   FSR1L
     CLRF    FSR1H
     
@@ -66,31 +76,24 @@ _drawLine:
     ;If outer linecount is zero
     MOVLW   OUTER_LOOPS
     MOVWF   BANKMASK(linecount_outer)
-    ;GOTO    shorter_continue_sync
-    GOTO    vblank
+    BSF	    BANKMASK(v_counter), 7
+    GOTO    shorter_continue_sync
+    ;GOTO    vblank
     
-long_continue_sync:   ;After 7 cycles 
+long_continue_sync:   ;After 15 cycles 
     NOP
-    NOP
-    NOP
-    NOP
-    
-short_continue_sync:	;After 11 cycles
     NOP
     NOP
     NOP
     
-shorter_continue_sync:	;After 14 cycles
+short_continue_sync:	;After 19 cycles
     NOP
     NOP
     NOP
     NOP
-    NOP
-    NOP
-    NOP
-    NOP 
-    NOP
-    MOVLB   0x00    ;Select bank 0
+    
+shorter_continue_sync:	;After 23 cycles
+    MOVLB   0x00	;Select bank 0
     
     ;------------- 12 Instruction back porch (48 pixel clocks) ------------
    
@@ -273,15 +276,24 @@ shorter_continue_sync:	;After 14 cycles
     
 vblank:
     ;;;FINISH LAST LINE AS EMPTY LINE
-    ;Finish last sync pulse
-    NOP
-    NOP
+    ;Finish last sync pulse, got here with 5 cycles
+    BCF	BANKMASK(v_counter), 7
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP 
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
     NOP
     MOVLB   0x00    ;Select bank 0
     
