@@ -1,0 +1,408 @@
+Disassembly Listing for vga_test_full_signal
+Generated From:
+C:/Users/ad2la/MPLABXProjects/vga_test_full_signal.X/dist/default/debug/vga_test_full_signal.X.debug.elf
+11-Jun-2026 7:26:14 PM
+
+---  C:/Users/ad2la/MPLABXProjects/vga_test_full_signal.X/vga_test_full_signal.c  -----------------------
+1:             // PIC16F15244 LED Blink - XC8 Compiler
+2:             // CONFIG1
+3:             //#pragma config FEXTOSC = OFF    // External Oscillator Mode Selection bits (Oscillator not enabled)
+4:             //#pragma config RSTOSC = HFINTOSC_32MHZ// Power-up Default Value for COSC bits (HFINTOSC (32 MHz))
+5:             #pragma config FEXTOSC = 11     //External oscillator at or above 16 MHz
+6:             #pragma config RSTOSC = 111     //External oscillator select
+7:             #pragma config CLKOUTEN = OFF   // Clock Out Enable bit (CLKOUT function is disabled; I/O function on RA4)
+8:             #pragma config VDDAR = HI       // VDD Range Analog Calibration Selection bit (Internal analog systems are calibrated for operation between VDD = 2.3V - 5.5V)
+9:             
+10:            // CONFIG2
+11:            #pragma config MCLRE = EXTMCLR  // Master Clear Enable bit (If LVP = 0, MCLR pin is MCLR; If LVP = 1, RA3 pin function is MCLR)
+12:            #pragma config PWRTS = PWRT_OFF // Power-up Timer Selection bits (PWRT is disabled)
+13:            #pragma config WDTE = OFF       // WDT Operating Mode bits (WDT disabled; SEN is ignored)
+14:            #pragma config BOREN = ON       // Brown-out Reset Enable bits (Brown-out Reset Enabled, SBOREN bit is ignored)
+15:            #pragma config BORV = LO        // Brown-out Reset Voltage Selection bit (Brown-out Reset Voltage (VBOR) set to 1.9V)
+16:            #pragma config PPS1WAY = ON     // PPSLOCKED One-Way Set Enable bit (The PPSLOCKED bit can be set once after an unlocking sequence is executed; once PPSLOCKED is set, all future changes to PPS registers are prevented)
+17:            #pragma config STVREN = ON      // Stack Overflow/Underflow Reset Enable bit (Stack Overflow or Underflow will cause a reset)
+18:            
+19:            // CONFIG3
+20:            
+21:            // CONFIG4
+22:            #pragma config BBSIZE = BB512   // Boot Block Size Selection bits (512 words boot block size)
+23:            #pragma config BBEN = OFF       // Boot Block Enable bit (Boot Block is disabled)
+24:            #pragma config SAFEN = OFF      // SAF Enable bit (SAF is disabled)
+25:            #pragma config WRTAPP = OFF     // Application Block Write Protection bit (Application Block is not write-protected)
+26:            #pragma config WRTB = OFF       // Boot Block Write Protection bit (Boot Block is not write-protected)
+27:            #pragma config WRTC = OFF       // Configuration Registers Write Protection bit (Configuration Registers are not write-protected)
+28:            #pragma config WRTSAF = OFF     // Storage Area Flash (SAF) Write Protection bit (SAF is not write-protected)
+29:            #pragma config LVP = ON         // Low Voltage Programming Enable bit (Low Voltage programming enabled. MCLR/Vpp pin function is MCLR. MCLRE Configuration bit is ignored.)
+30:            
+31:            // CONFIG5
+32:            #pragma config CP = OFF         // User Program Flash Memory Code Protection bit (User Program Flash Memory code protection is disabled)
+33:            
+34:            // #pragma config statements should precede project file includes.
+35:            // Use project enums instead of #define for ON and OFF.
+36:            
+37:            #include <xc.h>
+38:            #define _XTAL_FREQ 32000000
+39:            #define LINE_SIZE_PX 80
+40:            
+41:            extern void drawLine(uint8_t *buf);
+42:            
+43:            void fillLineBuffer(uint8_t line[], uint8_t size) {
+44:                for (uint8_t i = 0; i < size; i++) {
+06ED  01F2     CLRF i
+06EE  2EF9     GOTO 0x6F9
+45:                    line[i] = (i%64) + 64 + 128;
+06EF  0870     MOVF __pcstackCOMMON, W
+06F0  0772     ADDWF i, W
+06F1  0086     MOVWF FSR1
+06F2  0187     CLRF FSR1H
+06F3  0872     MOVF i, W
+06F4  393F     ANDLW 0x3F
+06F5  3EC0     ADDLW 0xC0
+06F6  0081     MOVWF INDF1
+46:                }
+06F7  3001     MOVLW 0x1
+06F8  07F2     ADDWF i, F
+06F9  0871     MOVF size, W
+06FA  0272     SUBWF i, W
+06FB  1C03     BTFSS STATUS, 0x0
+06FC  2EFE     GOTO 0x6FE
+06FD  2EFF     GOTO 0x6FF
+06FE  2EEF     GOTO 0x6EF
+47:            }
+06FF  0008     RETURN
+48:            
+49:            uint8_t line_buffer[LINE_SIZE_PX];
+50:            uint8_t *line_buffer_ptr;
+51:            
+52:            int main(void) {    
+53:                ANSELA = 0x00;
+0700  017E     MOVLB 0x3E
+0701  01B8     CLRF ANSELA
+54:                ANSELB = 0x00;
+0702  01C3     CLRF ANSELB
+55:                ANSELC = 0x00;
+0703  01CE     CLRF ANSELC
+56:                
+57:                line_buffer_ptr = line_buffer;
+0704  3020     MOVLW 0x20
+0705  00F3     MOVWF 0x1F73
+58:                
+59:                fillLineBuffer(line_buffer, LINE_SIZE_PX);
+0706  3020     MOVLW 0x20
+0707  00F0     MOVWF 0x1F70
+0708  3050     MOVLW 0x50
+0709  00F1     MOVWF 0x1F71
+070A  3186     MOVLP 0x6
+070B  26ED     CALL 0x6ED
+070C  3187     MOVLP 0x7
+60:                
+61:                TRISC = 0; //Set output
+070D  0140     MOVLB 0x0
+070E  0194     CLRF TRISC
+62:                LATC = 0; //Set low
+070F  019A     CLRF LATC
+63:            
+64:                while (1) {
+65:                    drawLine(line_buffer);
+0710  3020     MOVLW 0x20
+0711  00F0     MOVWF __pcstackCOMMON
+0712  3187     MOVLP 0x7
+0713  2718     CALL 0x718
+0714  3187     MOVLP 0x7
+0715  2F10     GOTO 0x710
+0716  3180     MOVLP 0x0
+66:                }
+67:                
+68:                return 0;
+69:            }
+---  C:/Users/ad2la/MPLABXProjects/vga_test_full_signal.X/asm_funcs.S  ----------------------------------
+                                                  1:     #include <xc.inc>
+                                                  2:         
+                                                  3:     GLOBAL _drawLine
+                                                  4:     
+                                                  5:     PSECT app_data, class=bank0, space=1, delta=1, abs
+                                                  6:      ORG 0x20
+                                                  7:     
+                                                  8:     addr:
+                                                  9:         DS  2
+                                                  10:    linecount:
+                                                  11:        DS 2
+                                                  12:        
+                                                  13:    PSECT mainCode, class=CODE, delta=2
+                                                  14:    
+                                                  15:    _drawLine:
+0718  00A0     MOVWF 0x20                         16:        MOVWF addr
+                                                  17:        frame:
+                                                  18:        ;MOVLW   2
+                                                  19:        ;MOVWF   BANKMASK(linecount+1)   ; outer counter (2 passes)
+                                                  20:        ;MOVLW   240
+                                                  21:        ;MOVWF   BANKMASK(linecount)     ; inner counter (240 lines each)
+                                                  22:    
+0719  171A     BSF LATC, 0x6                      23:        BSF BANKMASK(LATC), 6
+071A  179A     BSF LATC, 0x7                      24:        BSF BANKMASK(LATC), 7
+                                                  25:        
+                                                  26:        line_loop:
+                                                  27:        ;------------- 4 Instruction front porch (16 pixel clocks) ------------
+                                                  28:        ;; 2 instructions from GOTO at EOF
+071B  0820     MOVF 0x20, W                       29:        MOVF addr, W
+                                                  30:        
+                                                  31:        
+                                                  32:        ;------------- 24 Instruction sync pulse (96 pixel clocks) ------------
+                                                  33:    
+071C  131A     BCF LATC, 0x6                      34:        BCF BANKMASK(LATC), 6
+071D  0086     MOVWF FSR1                         35:        MOVWF FSR1L                   ;Passed parameter (line_buffer) is in WREG, FSR1L = low byte  (FSR1 now points to line_buffer[0])
+071E  0187     CLRF FSR1H                         36:        CLRF FSR1H
+                                                  37:        /*DECFSZ BANKMASK(linecount), F	;Decrement linecount and store in linecount, skip next instruction if zero
+                                                  38:        GOTO long_continue_sync	;Continue sync pulse if linecount not zero
+                                                  39:        
+                                                  40:        MOVLW   240	    ;Countdown from 240 twice
+                                                  41:        MOVWF   BANKMASK(linecount)
+                                                  42:        DECFSZ  BANKMASK(linecount+1), F	;If second time counting down from 240
+                                                  43:        GOTO    short_continue_sync
+                                                  44:        GOTO    vblank*/
+                                                  45:    long_continue_sync:    
+071F  0000     NOP                                46:        NOP
+0720  0000     NOP                                47:        NOP
+0721  0000     NOP                                48:        NOP
+0722  0000     NOP                                49:        NOP
+0723  0000     NOP                                50:        NOP
+0724  0000     NOP                                51:        NOP
+0725  0000     NOP                                52:        NOP
+0726  0000     NOP                                53:        NOP
+                                                  54:    short_continue_sync:
+0727  0000     NOP                                55:        NOP
+0728  0000     NOP                                56:        NOP
+0729  0000     NOP                                57:        NOP
+072A  0000     NOP                                58:        NOP
+072B  0000     NOP                                59:        NOP 
+072C  0000     NOP                                60:        NOP
+072D  0000     NOP                                61:        NOP
+072E  0000     NOP                                62:        NOP
+072F  0000     NOP                                63:        NOP
+0730  0000     NOP                                64:        NOP
+0731  0000     NOP                                65:        NOP
+                                                  66:        
+                                                  67:        ;------------- 12 Instruction back porch (48 pixel clocks) ------------
+                                                  68:       
+0732  171A     BSF LATC, 0x6                      69:        BSF BANKMASK(LATC), 6
+0733  0000     NOP                                70:        NOP
+0734  0000     NOP                                71:        NOP
+0735  0000     NOP                                72:        NOP
+0736  0000     NOP                                73:        NOP
+0737  0000     NOP                                74:        NOP
+0738  0000     NOP                                75:        NOP
+0739  0000     NOP                                76:        NOP
+073A  0000     NOP                                77:        NOP
+073B  0000     NOP                                78:        NOP
+073C  0000     NOP                                79:        NOP
+                                                  80:        
+                                                  81:        
+                                                  82:        ;------------- Output 80 pixels with 160 instructions (640 pixel clocks) ------------
+073D  0016     MOVIW FSR1++                       83:        MOVIW   FSR1++
+073E  009A     MOVWF LATC                         84:        MOVWF   BANKMASK(LATC)
+073F  0016     MOVIW FSR1++                       85:        MOVIW   FSR1++
+0740  009A     MOVWF LATC                         86:        MOVWF   BANKMASK(LATC)
+0741  0016     MOVIW FSR1++                       87:        MOVIW   FSR1++
+0742  009A     MOVWF LATC                         88:        MOVWF   BANKMASK(LATC)
+0743  0016     MOVIW FSR1++                       89:        MOVIW   FSR1++
+0744  009A     MOVWF LATC                         90:        MOVWF   BANKMASK(LATC)
+0745  0016     MOVIW FSR1++                       91:        MOVIW   FSR1++
+0746  009A     MOVWF LATC                         92:        MOVWF   BANKMASK(LATC)
+0747  0016     MOVIW FSR1++                       93:        MOVIW   FSR1++
+0748  009A     MOVWF LATC                         94:        MOVWF   BANKMASK(LATC)
+0749  0016     MOVIW FSR1++                       95:        MOVIW   FSR1++
+074A  009A     MOVWF LATC                         96:        MOVWF   BANKMASK(LATC)
+074B  0016     MOVIW FSR1++                       97:        MOVIW   FSR1++
+074C  009A     MOVWF LATC                         98:        MOVWF   BANKMASK(LATC)
+074D  0016     MOVIW FSR1++                       99:        MOVIW   FSR1++
+074E  009A     MOVWF LATC                         100:       MOVWF   BANKMASK(LATC)
+074F  0016     MOVIW FSR1++                       101:       MOVIW   FSR1++
+0750  009A     MOVWF LATC                         102:       MOVWF   BANKMASK(LATC)
+0751  0016     MOVIW FSR1++                       103:       MOVIW   FSR1++
+0752  009A     MOVWF LATC                         104:       MOVWF   BANKMASK(LATC)
+0753  0016     MOVIW FSR1++                       105:       MOVIW   FSR1++
+0754  009A     MOVWF LATC                         106:       MOVWF   BANKMASK(LATC)
+0755  0016     MOVIW FSR1++                       107:       MOVIW   FSR1++
+0756  009A     MOVWF LATC                         108:       MOVWF   BANKMASK(LATC)
+0757  0016     MOVIW FSR1++                       109:       MOVIW   FSR1++
+0758  009A     MOVWF LATC                         110:       MOVWF   BANKMASK(LATC)
+0759  0016     MOVIW FSR1++                       111:       MOVIW   FSR1++
+075A  009A     MOVWF LATC                         112:       MOVWF   BANKMASK(LATC)
+075B  0016     MOVIW FSR1++                       113:       MOVIW   FSR1++
+075C  009A     MOVWF LATC                         114:       MOVWF   BANKMASK(LATC)
+075D  0016     MOVIW FSR1++                       115:       MOVIW   FSR1++
+075E  009A     MOVWF LATC                         116:       MOVWF   BANKMASK(LATC)
+075F  0016     MOVIW FSR1++                       117:       MOVIW   FSR1++
+0760  009A     MOVWF LATC                         118:       MOVWF   BANKMASK(LATC)
+0761  0016     MOVIW FSR1++                       119:       MOVIW   FSR1++
+0762  009A     MOVWF LATC                         120:       MOVWF   BANKMASK(LATC)
+0763  0016     MOVIW FSR1++                       121:       MOVIW   FSR1++
+0764  009A     MOVWF LATC                         122:       MOVWF   BANKMASK(LATC)
+0765  0016     MOVIW FSR1++                       123:       MOVIW   FSR1++
+0766  009A     MOVWF LATC                         124:       MOVWF   BANKMASK(LATC)
+0767  0016     MOVIW FSR1++                       125:       MOVIW   FSR1++
+0768  009A     MOVWF LATC                         126:       MOVWF   BANKMASK(LATC)
+0769  0016     MOVIW FSR1++                       127:       MOVIW   FSR1++
+076A  009A     MOVWF LATC                         128:       MOVWF   BANKMASK(LATC)
+076B  0016     MOVIW FSR1++                       129:       MOVIW   FSR1++
+076C  009A     MOVWF LATC                         130:       MOVWF   BANKMASK(LATC)
+076D  0016     MOVIW FSR1++                       131:       MOVIW   FSR1++
+076E  009A     MOVWF LATC                         132:       MOVWF   BANKMASK(LATC)
+076F  0016     MOVIW FSR1++                       133:       MOVIW   FSR1++
+0770  009A     MOVWF LATC                         134:       MOVWF   BANKMASK(LATC)
+0771  0016     MOVIW FSR1++                       135:       MOVIW   FSR1++
+0772  009A     MOVWF LATC                         136:       MOVWF   BANKMASK(LATC)
+0773  0016     MOVIW FSR1++                       137:       MOVIW   FSR1++
+0774  009A     MOVWF LATC                         138:       MOVWF   BANKMASK(LATC)
+0775  0016     MOVIW FSR1++                       139:       MOVIW   FSR1++
+0776  009A     MOVWF LATC                         140:       MOVWF   BANKMASK(LATC)
+0777  0016     MOVIW FSR1++                       141:       MOVIW   FSR1++
+0778  009A     MOVWF LATC                         142:       MOVWF   BANKMASK(LATC)
+0779  0016     MOVIW FSR1++                       143:       MOVIW   FSR1++
+077A  009A     MOVWF LATC                         144:       MOVWF   BANKMASK(LATC)
+077B  0016     MOVIW FSR1++                       145:       MOVIW   FSR1++
+077C  009A     MOVWF LATC                         146:       MOVWF   BANKMASK(LATC)
+077D  0016     MOVIW FSR1++                       147:       MOVIW   FSR1++
+077E  009A     MOVWF LATC                         148:       MOVWF   BANKMASK(LATC)
+077F  0016     MOVIW FSR1++                       149:       MOVIW   FSR1++
+0780  009A     MOVWF LATC                         150:       MOVWF   BANKMASK(LATC)
+0781  0016     MOVIW FSR1++                       151:       MOVIW   FSR1++
+0782  009A     MOVWF LATC                         152:       MOVWF   BANKMASK(LATC)
+0783  0016     MOVIW FSR1++                       153:       MOVIW   FSR1++
+0784  009A     MOVWF LATC                         154:       MOVWF   BANKMASK(LATC)
+0785  0016     MOVIW FSR1++                       155:       MOVIW   FSR1++
+0786  009A     MOVWF LATC                         156:       MOVWF   BANKMASK(LATC)
+0787  0016     MOVIW FSR1++                       157:       MOVIW   FSR1++
+0788  009A     MOVWF LATC                         158:       MOVWF   BANKMASK(LATC)
+0789  0016     MOVIW FSR1++                       159:       MOVIW   FSR1++
+078A  009A     MOVWF LATC                         160:       MOVWF   BANKMASK(LATC)
+078B  0016     MOVIW FSR1++                       161:       MOVIW   FSR1++
+078C  009A     MOVWF LATC                         162:       MOVWF   BANKMASK(LATC)
+078D  0016     MOVIW FSR1++                       163:       MOVIW   FSR1++
+078E  009A     MOVWF LATC                         164:       MOVWF   BANKMASK(LATC)
+078F  0016     MOVIW FSR1++                       165:       MOVIW   FSR1++
+0790  009A     MOVWF LATC                         166:       MOVWF   BANKMASK(LATC)
+0791  0016     MOVIW FSR1++                       167:       MOVIW   FSR1++
+0792  009A     MOVWF LATC                         168:       MOVWF   BANKMASK(LATC)
+0793  0016     MOVIW FSR1++                       169:       MOVIW   FSR1++
+0794  009A     MOVWF LATC                         170:       MOVWF   BANKMASK(LATC)
+0795  0016     MOVIW FSR1++                       171:       MOVIW   FSR1++
+0796  009A     MOVWF LATC                         172:       MOVWF   BANKMASK(LATC)
+0797  0016     MOVIW FSR1++                       173:       MOVIW   FSR1++
+0798  009A     MOVWF LATC                         174:       MOVWF   BANKMASK(LATC)
+0799  0016     MOVIW FSR1++                       175:       MOVIW   FSR1++
+079A  009A     MOVWF LATC                         176:       MOVWF   BANKMASK(LATC)
+079B  0016     MOVIW FSR1++                       177:       MOVIW   FSR1++
+079C  009A     MOVWF LATC                         178:       MOVWF   BANKMASK(LATC)
+079D  0016     MOVIW FSR1++                       179:       MOVIW   FSR1++
+079E  009A     MOVWF LATC                         180:       MOVWF   BANKMASK(LATC)
+079F  0016     MOVIW FSR1++                       181:       MOVIW   FSR1++
+07A0  009A     MOVWF LATC                         182:       MOVWF   BANKMASK(LATC)
+07A1  0016     MOVIW FSR1++                       183:       MOVIW   FSR1++
+07A2  009A     MOVWF LATC                         184:       MOVWF   BANKMASK(LATC)
+07A3  0016     MOVIW FSR1++                       185:       MOVIW   FSR1++
+07A4  009A     MOVWF LATC                         186:       MOVWF   BANKMASK(LATC)
+07A5  0016     MOVIW FSR1++                       187:       MOVIW   FSR1++
+07A6  009A     MOVWF LATC                         188:       MOVWF   BANKMASK(LATC)
+07A7  0016     MOVIW FSR1++                       189:       MOVIW   FSR1++
+07A8  009A     MOVWF LATC                         190:       MOVWF   BANKMASK(LATC)
+07A9  0016     MOVIW FSR1++                       191:       MOVIW   FSR1++
+07AA  009A     MOVWF LATC                         192:       MOVWF   BANKMASK(LATC)
+07AB  0016     MOVIW FSR1++                       193:       MOVIW   FSR1++
+07AC  009A     MOVWF LATC                         194:       MOVWF   BANKMASK(LATC)
+07AD  0016     MOVIW FSR1++                       195:       MOVIW   FSR1++
+07AE  009A     MOVWF LATC                         196:       MOVWF   BANKMASK(LATC)
+07AF  0016     MOVIW FSR1++                       197:       MOVIW   FSR1++
+07B0  009A     MOVWF LATC                         198:       MOVWF   BANKMASK(LATC)
+07B1  0016     MOVIW FSR1++                       199:       MOVIW   FSR1++
+07B2  009A     MOVWF LATC                         200:       MOVWF   BANKMASK(LATC)
+07B3  0016     MOVIW FSR1++                       201:       MOVIW   FSR1++
+07B4  009A     MOVWF LATC                         202:       MOVWF   BANKMASK(LATC)
+07B5  0016     MOVIW FSR1++                       203:       MOVIW   FSR1++
+07B6  009A     MOVWF LATC                         204:       MOVWF   BANKMASK(LATC)
+07B7  0016     MOVIW FSR1++                       205:       MOVIW   FSR1++
+07B8  009A     MOVWF LATC                         206:       MOVWF   BANKMASK(LATC)
+07B9  0016     MOVIW FSR1++                       207:       MOVIW   FSR1++
+07BA  009A     MOVWF LATC                         208:       MOVWF   BANKMASK(LATC)
+07BB  0016     MOVIW FSR1++                       209:       MOVIW   FSR1++
+07BC  009A     MOVWF LATC                         210:       MOVWF   BANKMASK(LATC)
+07BD  0016     MOVIW FSR1++                       211:       MOVIW   FSR1++
+07BE  009A     MOVWF LATC                         212:       MOVWF   BANKMASK(LATC)
+07BF  0016     MOVIW FSR1++                       213:       MOVIW   FSR1++
+07C0  009A     MOVWF LATC                         214:       MOVWF   BANKMASK(LATC)
+07C1  0016     MOVIW FSR1++                       215:       MOVIW   FSR1++
+07C2  009A     MOVWF LATC                         216:       MOVWF   BANKMASK(LATC)
+07C3  0016     MOVIW FSR1++                       217:       MOVIW   FSR1++
+07C4  009A     MOVWF LATC                         218:       MOVWF   BANKMASK(LATC)
+07C5  0016     MOVIW FSR1++                       219:       MOVIW   FSR1++
+07C6  009A     MOVWF LATC                         220:       MOVWF   BANKMASK(LATC)
+07C7  0016     MOVIW FSR1++                       221:       MOVIW   FSR1++
+07C8  009A     MOVWF LATC                         222:       MOVWF   BANKMASK(LATC)
+07C9  0016     MOVIW FSR1++                       223:       MOVIW   FSR1++
+07CA  009A     MOVWF LATC                         224:       MOVWF   BANKMASK(LATC)
+07CB  0016     MOVIW FSR1++                       225:       MOVIW   FSR1++
+07CC  009A     MOVWF LATC                         226:       MOVWF   BANKMASK(LATC)
+07CD  0016     MOVIW FSR1++                       227:       MOVIW   FSR1++
+07CE  009A     MOVWF LATC                         228:       MOVWF   BANKMASK(LATC)
+07CF  0016     MOVIW FSR1++                       229:       MOVIW   FSR1++
+07D0  009A     MOVWF LATC                         230:       MOVWF   BANKMASK(LATC)
+07D1  0016     MOVIW FSR1++                       231:       MOVIW   FSR1++
+07D2  009A     MOVWF LATC                         232:       MOVWF   BANKMASK(LATC)
+07D3  0016     MOVIW FSR1++                       233:       MOVIW   FSR1++
+07D4  009A     MOVWF LATC                         234:       MOVWF   BANKMASK(LATC)
+07D5  0016     MOVIW FSR1++                       235:       MOVIW   FSR1++
+07D6  009A     MOVWF LATC                         236:       MOVWF   BANKMASK(LATC)
+07D7  0016     MOVIW FSR1++                       237:       MOVIW   FSR1++
+07D8  009A     MOVWF LATC                         238:       MOVWF   BANKMASK(LATC)
+07D9  0016     MOVIW FSR1++                       239:       MOVIW   FSR1++
+07DA  009A     MOVWF LATC                         240:       MOVWF   BANKMASK(LATC)
+07DB  30C0     MOVLW 0xC0                         241:       MOVLW   0b11000000
+07DC  009A     MOVWF LATC                         242:       MOVWF   BANKMASK(LATC)
+07DD  2F1B     GOTO 0x71B                         243:       GOTO line_loop
+                                                  244:       
+                                                  245:   vblank:
+                                                  246:       ;Finish last sync pulse
+07DE  0000     NOP                                247:       NOP
+07DF  0000     NOP                                248:       NOP
+07E0  0000     NOP                                249:       NOP
+07E1  0000     NOP                                250:       NOP 
+07E2  0000     NOP                                251:       NOP
+07E3  0000     NOP                                252:       NOP
+07E4  0000     NOP                                253:       NOP
+07E5  0000     NOP                                254:       NOP
+07E6  0000     NOP                                255:       NOP
+07E7  0000     NOP                                256:       NOP
+                                                  257:       
+                                                  258:       ;------------- 12 Instruction back porch (48 pixel clocks) ------------
+                                                  259:      
+07E8  171A     BSF LATC, 0x6                      260:       BSF BANKMASK(LATC), 6
+07E9  0000     NOP                                261:       NOP
+07EA  0000     NOP                                262:       NOP
+07EB  0000     NOP                                263:       NOP
+07EC  0000     NOP                                264:       NOP
+07ED  0000     NOP                                265:       NOP
+07EE  0000     NOP                                266:       NOP
+07EF  0000     NOP                                267:       NOP
+07F0  0000     NOP                                268:       NOP
+07F1  0000     NOP                                269:       NOP
+07F2  0000     NOP                                270:       NOP
+                                                  271:       
+                                                  272:       ;do horizontal line
+07F3  2F19     GOTO 0x719                         273:       GOTO frame
+                                                  274:       
+07F4  0008     RETURN                             275:       RETURN
+---  C:/Users/ad2la/AppData/Local/Temp/xcAs3tw.0/driver_tmp_1.s  ----------------------------------------
+06E7  0064     CLRWDT
+06E8  0180     CLRF INDF0
+06E9  3101     ADDFSR 0, 1
+06EA  0B89     DECFSZ WREG, F
+06EB  2EE8     GOTO 0x6E8
+06EC  3400     RETLW 0x0
+07F5  3020     MOVLW 0x20
+07F6  0084     MOVWF FSR0
+07F7  3000     MOVLW 0x0
+07F8  0085     MOVWF FSR0H
+07F9  3050     MOVLW 0x50
+07FA  3186     MOVLP 0x6
+07FD  0140     MOVLB 0x0
+07FE  3187     MOVLP 0x7
