@@ -4,10 +4,10 @@ GLOBAL _drawLine
 GLOBAL _line_buffer
 
 ;Number of displayed lines = inner * outer
-INNER_LOOPS	EQU	2
+INNER_LOOPS	EQU	240
 OUTER_LOOPS	EQU	2
 	
-V_FRONT_PORCH	EQU	5
+V_FRONT_PORCH	EQU	11
 V_SYNC_PULSE	EQU	2
 V_BACK_PORCH	EQU	31
 	
@@ -458,30 +458,37 @@ vblank:
     NOP
     NOP
     NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
     MOVLB   0x01    ;Select bank 1
     MOVLW   (V_FRONT_PORCH - 1)
     MOVWF   BANKMASK(v_counter)
     
+    v_early_front_porch:
+    ;16 Instruction padding
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    v_early_sync_pulse_setup:
+    ;7 Instruction padding
+    NOP
+    NOP
+    NOP
+    v_early_back_porch_setup:
+    ;4 Instruction padding
+    NOP
+    NOP
+    NOP
+    NOP
+    
     
     ;-------END OF FIRST VBLANK LINE---------;
 
-    horizontal_line:
+    v_front_porch:
     ;4 instruction front porch
     MOVLB   0x00    ;Select bank 1
     NOP
@@ -666,17 +673,41 @@ vblank:
     NOP
     NOP
     NOP
+    
+    ;-----------140 instructions
+    MOVLB   0x01
+    DECFSZ  BANKMASK(v_counter)
+    GOTO    v_early_front_porch
+   
+    BTFSS   BANKMASK(v_state), 0
+    ;MOVLW   V_SYNC_PULSE
+    ;MOVLW   V_BACK_PORCH
+    GOTO    v_sync_pulse_setup
+    GOTO    v_back_porch_setup
+    
+    v_sync_pulse_setup:
+    BSF	    BANKMASK(v_state), 0
+    MOVLW   V_SYNC_PULSE
+    MOVWF   BANKMASK(v_counter)
+    MOVLB   0x00
+    BCF	    BANKMASK(LATC), 7
+    GOTO    v_early_sync_pulse_setup
+    
+    v_back_porch_setup:
+    ;Here after 7 cycles
+    BTFSC   BANKMASK(v_state), 1
+    GOTO    finish_vsync
+    
+    BSF	    BANKMASK(v_state), 1
+    MOVLW   V_BACK_PORCH
+    MOVWF   BANKMASK(v_counter)
+    MOVLB   0x00
+    BSF	    BANKMASK(LATC), 7
+    GOTO    v_early_back_porch_setup
+    
+    finish_vsync:
     NOP
     NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    ;-----------150 instructions
     NOP
     NOP
     NOP
@@ -684,9 +715,8 @@ vblank:
     NOP
     NOP
     MOVLB   0x01
-    DECFSZ  BANKMASK(v_counter)
-    GOTO    horizontal_line
-    NOP
+    CLRF    BANKMASK(v_state)
+    
     ;-----------160 instructions
     
     
