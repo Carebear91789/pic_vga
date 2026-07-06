@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=vga_test_full_signal.X
+PROJECTNAME=vga_static_bars.X
 
 # Active Configuration
 DEFAULTCONF=default

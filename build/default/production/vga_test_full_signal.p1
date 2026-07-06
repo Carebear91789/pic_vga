@@ -9,8 +9,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 "8975
 [; ;C:/Program Files/Microchip/MPLABX/v6.30/packs/Microchip/PIC16F1xxxx_DFP/1.29.444/xc8\pic\include\proc/pic16f15244.h: 8975: extern volatile unsigned char ANSELC __attribute__((address(0x1F4E)));
 [v _ANSELC `Vuc ~T0 @X0 0 e@8014 ]
-"50 vga_test_full_signal.c
-[; ;vga_test_full_signal.c: 50: extern uint8_t line_buffer[80];
+"77 vga_test_full_signal.c
+[; ;vga_test_full_signal.c: 77: extern uint8_t line_buffer[80];
 [v _line_buffer `uc ~T0 @X0 -> 0 `x e ]
 "614 C:/Program Files/Microchip/MPLABX/v6.30/packs/Microchip/PIC16F1xxxx_DFP/1.29.444/xc8\pic\include\proc/pic16f15244.h
 [; ;C:/Program Files/Microchip/MPLABX/v6.30/packs/Microchip/PIC16F1xxxx_DFP/1.29.444/xc8\pic\include\proc/pic16f15244.h: 614: extern volatile unsigned char TRISC __attribute__((address(0x014)));
@@ -18,8 +18,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 "765
 [; ;C:/Program Files/Microchip/MPLABX/v6.30/packs/Microchip/PIC16F1xxxx_DFP/1.29.444/xc8\pic\include\proc/pic16f15244.h: 765: extern volatile unsigned char LATC __attribute__((address(0x01A)));
 [v _LATC `Vuc ~T0 @X0 0 e@26 ]
-"41 vga_test_full_signal.c
-[; ;vga_test_full_signal.c: 41: extern void drawLine(uint8_t *buf);
+"44 vga_test_full_signal.c
+[; ;vga_test_full_signal.c: 44: extern void drawLine(uint8_t *buf);
 [v _drawLine `(v ~T0 @X0 0 ef1`*uc ]
 "5 vga_test_full_signal.c
 [p x FEXTOSC  =  11      ]
@@ -613,80 +613,176 @@ Version 4.0 HI-TECH Software Intermediate Code
 "9754
 [; ;C:/Program Files/Microchip/MPLABX/v6.30/packs/Microchip/PIC16F1xxxx_DFP/1.29.444/xc8\pic\include\proc/pic16f15244.h: 9754: __asm("TOSH equ 01FEFh");
 [; <" TOSH equ 01FEFh ;# ">
-"43 vga_test_full_signal.c
-[; ;vga_test_full_signal.c: 43: void fillLineBuffer(uint8_t line[], uint8_t size) {
+"46 vga_test_full_signal.c
+[; ;vga_test_full_signal.c: 46: uint8_t hsv_to_rgb(uint8_t h) {
+[v _hsv_to_rgb `(uc ~T0 @X0 1 ef1`uc ]
+{
+[e :U _hsv_to_rgb ]
+[v _h `uc ~T0 @X0 1 r1 ]
+[f ]
+"47
+[; ;vga_test_full_signal.c: 47:     h %= 24;
+[e =% _h -> 24 `i ]
+"49
+[; ;vga_test_full_signal.c: 49:     if (h < 4) {
+[e $ ! < -> _h `i -> 4 `i 521  ]
+{
+"50
+[; ;vga_test_full_signal.c: 50:         return 3 * 1 + (h % 4) * 4;
+[e ) -> + * -> 3 `i -> 1 `i * % -> _h `i -> 4 `i -> 4 `i `uc ]
+[e $UE 520  ]
+"51
+[; ;vga_test_full_signal.c: 51:     }
+}
+[e $U 522  ]
+"52
+[; ;vga_test_full_signal.c: 52:     else if (h < 8) {
+[e :U 521 ]
+[e $ ! < -> _h `i -> 8 `i 523  ]
+{
+"53
+[; ;vga_test_full_signal.c: 53:         return 3 * 4 + (3 - (h % 4)) * 1;
+[e ) -> + * -> 3 `i -> 4 `i * - -> 3 `i % -> _h `i -> 4 `i -> 1 `i `uc ]
+[e $UE 520  ]
+"54
+[; ;vga_test_full_signal.c: 54:     }
+}
+[e $U 524  ]
+"55
+[; ;vga_test_full_signal.c: 55:     else if (h < 12) {
+[e :U 523 ]
+[e $ ! < -> _h `i -> 12 `i 525  ]
+{
+"56
+[; ;vga_test_full_signal.c: 56:         return 3 * 4 + (h % 4) * 16;
+[e ) -> + * -> 3 `i -> 4 `i * % -> _h `i -> 4 `i -> 16 `i `uc ]
+[e $UE 520  ]
+"57
+[; ;vga_test_full_signal.c: 57:     }
+}
+[e $U 526  ]
+"58
+[; ;vga_test_full_signal.c: 58:     else if (h < 16) {
+[e :U 525 ]
+[e $ ! < -> _h `i -> 16 `i 527  ]
+{
+"59
+[; ;vga_test_full_signal.c: 59:         return 3 * 16 + (3 - (h % 4)) * 4;
+[e ) -> + * -> 3 `i -> 16 `i * - -> 3 `i % -> _h `i -> 4 `i -> 4 `i `uc ]
+[e $UE 520  ]
+"60
+[; ;vga_test_full_signal.c: 60:     }
+}
+[e $U 528  ]
+"61
+[; ;vga_test_full_signal.c: 61:     else if (h < 20) {
+[e :U 527 ]
+[e $ ! < -> _h `i -> 20 `i 529  ]
+{
+"62
+[; ;vga_test_full_signal.c: 62:         return 3 * 16 + (h % 4) * 1;
+[e ) -> + * -> 3 `i -> 16 `i * % -> _h `i -> 4 `i -> 1 `i `uc ]
+[e $UE 520  ]
+"63
+[; ;vga_test_full_signal.c: 63:     }
+}
+[e $U 530  ]
+"64
+[; ;vga_test_full_signal.c: 64:     else if (h < 24) {
+[e :U 529 ]
+[e $ ! < -> _h `i -> 24 `i 531  ]
+{
+"65
+[; ;vga_test_full_signal.c: 65:         return 3 * 1 + (3 - (h % 4)) * 16;
+[e ) -> + * -> 3 `i -> 1 `i * - -> 3 `i % -> _h `i -> 4 `i -> 16 `i `uc ]
+[e $UE 520  ]
+"66
+[; ;vga_test_full_signal.c: 66:     }
+}
+[e :U 531 ]
+[e :U 530 ]
+[e :U 528 ]
+[e :U 526 ]
+[e :U 524 ]
+[e :U 522 ]
+"67
+[; ;vga_test_full_signal.c: 67: }
+[e :UE 520 ]
+}
+"69
+[; ;vga_test_full_signal.c: 69: void fillLineBuffer(uint8_t line[], uint8_t size) {
 [v _fillLineBuffer `(v ~T0 @X0 1 ef2`*uc`uc ]
 {
 [e :U _fillLineBuffer ]
 [v _line `*uc ~T0 @X0 1 r1 ]
 [v _size `uc ~T0 @X0 1 r2 ]
 [f ]
-"44
-[; ;vga_test_full_signal.c: 44:     for (uint8_t i = 0; i < size; i++) {
+"70
+[; ;vga_test_full_signal.c: 70:     for (uint8_t i = 0; i < size; i++) {
 {
 [v _i `uc ~T0 @X0 1 a ]
 [e = _i -> -> 0 `i `uc ]
-[e $U 524  ]
-[e :U 521 ]
+[e $U 536  ]
+[e :U 533 ]
 {
-"45
-[; ;vga_test_full_signal.c: 45:         line[i] = (i%64) + 64 + 128;
+"71
+[; ;vga_test_full_signal.c: 71:         line[i] = (i%64) + 64 + 128;
 [e = *U + _line * -> _i `ux -> -> # *U _line `ui `ux -> + + % -> _i `i -> 64 `i -> 64 `i -> 128 `i `uc ]
-"47
-[; ;vga_test_full_signal.c: 47:     }
+"74
+[; ;vga_test_full_signal.c: 74:     }
 }
 [e ++ _i -> -> 1 `i `uc ]
-[e :U 524 ]
-[e $ < -> _i `i -> _size `i 521  ]
-[e :U 522 ]
+[e :U 536 ]
+[e $ < -> _i `i -> _size `i 533  ]
+[e :U 534 ]
 }
-"48
-[; ;vga_test_full_signal.c: 48: }
-[e :UE 520 ]
+"75
+[; ;vga_test_full_signal.c: 75: }
+[e :UE 532 ]
 }
 [v $root$_main `(v ~T0 @X0 0 e ]
-"52
-[; ;vga_test_full_signal.c: 52: int main(void) {
+"79
+[; ;vga_test_full_signal.c: 79: int main(void) {
 [v _main `(i ~T0 @X0 1 ef ]
 {
 [e :U _main ]
 [f ]
-"53
-[; ;vga_test_full_signal.c: 53:     ANSELA = 0x00;
+"80
+[; ;vga_test_full_signal.c: 80:     ANSELA = 0x00;
 [e = _ANSELA -> -> 0 `i `uc ]
-"54
-[; ;vga_test_full_signal.c: 54:     ANSELB = 0x00;
+"81
+[; ;vga_test_full_signal.c: 81:     ANSELB = 0x00;
 [e = _ANSELB -> -> 0 `i `uc ]
-"55
-[; ;vga_test_full_signal.c: 55:     ANSELC = 0x00;
+"82
+[; ;vga_test_full_signal.c: 82:     ANSELC = 0x00;
 [e = _ANSELC -> -> 0 `i `uc ]
-"57
-[; ;vga_test_full_signal.c: 57:     fillLineBuffer(line_buffer, 80);
+"84
+[; ;vga_test_full_signal.c: 84:     fillLineBuffer(line_buffer, 80);
 [e ( _fillLineBuffer (2 , &U _line_buffer -> -> 80 `i `uc ]
-"59
-[; ;vga_test_full_signal.c: 59:     TRISC = 0;
+"86
+[; ;vga_test_full_signal.c: 86:     TRISC = 0;
 [e = _TRISC -> -> 0 `i `uc ]
-"60
-[; ;vga_test_full_signal.c: 60:     LATC = 0;
+"87
+[; ;vga_test_full_signal.c: 87:     LATC = 0;
 [e = _LATC -> -> 0 `i `uc ]
-"62
-[; ;vga_test_full_signal.c: 62:     while (1) {
-[e :U 527 ]
+"89
+[; ;vga_test_full_signal.c: 89:     while (1) {
+[e :U 539 ]
 {
-"63
-[; ;vga_test_full_signal.c: 63:         drawLine(line_buffer);
+"90
+[; ;vga_test_full_signal.c: 90:         drawLine(line_buffer);
 [e ( _drawLine (1 &U _line_buffer ]
-"64
-[; ;vga_test_full_signal.c: 64:     }
+"91
+[; ;vga_test_full_signal.c: 91:     }
 }
-[e :U 526 ]
-[e $U 527  ]
-[e :U 528 ]
-"66
-[; ;vga_test_full_signal.c: 66:     return 0;
+[e :U 538 ]
+[e $U 539  ]
+[e :U 540 ]
+"93
+[; ;vga_test_full_signal.c: 93:     return 0;
 [e ) -> 0 `i ]
-[e $UE 525  ]
-"67
-[; ;vga_test_full_signal.c: 67: }
-[e :UE 525 ]
+[e $UE 537  ]
+"94
+[; ;vga_test_full_signal.c: 94: }
+[e :UE 537 ]
 }

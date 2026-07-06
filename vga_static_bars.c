@@ -37,13 +37,40 @@
 #include <xc.h>
 #define _XTAL_FREQ 32000000
 #define LINE_SIZE_PX 80
+#define RED     1
+#define GREEN   4
+#define BLUE    16
 
 extern void drawLine(uint8_t *buf);
+
+uint8_t hsv_to_rgb(uint8_t h) {
+    h %= 24;
+    
+    if (h < 4) {
+        return 3 * RED + (h % 4) * GREEN;
+    }
+    else if (h < 8) {
+        return 3 * GREEN + (3 - (h % 4)) * RED;
+    }
+    else if (h < 12) {
+        return 3 * GREEN + (h % 4) * BLUE;
+    }
+    else if (h < 16) {
+        return 3 * BLUE + (3 - (h % 4)) * GREEN;
+    }
+    else if (h < 20) {
+        return 3 * BLUE + (h % 4) * RED;
+    }
+    else if (h < 24) {
+        return 3 * RED + (3 - (h % 4)) * BLUE;
+    }
+}
 
 void fillLineBuffer(uint8_t line[], uint8_t size) {
     for (uint8_t i = 0; i < size; i++) {
         line[i] = (i%64) + 64 + 128;
         //line[i] = 63 + 64 + 128;
+        //line[i] = hsv_to_rgb(i) + 64 + 128;
     }
 }
 

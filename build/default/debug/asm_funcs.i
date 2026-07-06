@@ -5996,10 +5996,10 @@ GLOBAL _drawLine
 GLOBAL _line_buffer
 
 ;Number of displayed lines = inner * outer
-INNER_LOOPS EQU 2
+INNER_LOOPS EQU 240
 OUTER_LOOPS EQU 2
 
-V_FRONT_PORCH EQU 5
+V_FRONT_PORCH EQU 11
 V_SYNC_PULSE EQU 2
 V_BACK_PORCH EQU 31
 
@@ -6033,6 +6033,8 @@ _drawLine:
     CLRF ((v_state) and 07Fh)
 
     MOVLB 0x00 ;Select bank 0
+    CLRF FSR1H
+
     frame:
 
     line_loop:
@@ -6051,10 +6053,9 @@ _drawLine:
     NOP
     NOP
     NOP
+    NOP
 
     MOVWF FSR1L
-    CLRF FSR1H
-
 
     MOVLB 0x01 ;Select bank 1
     DECFSZ ((linecount_inner) and 07Fh), 1 ;Decrement linecount and store in linecount, skip next instruction if zero
@@ -6449,30 +6450,37 @@ vblank:
     NOP
     NOP
     NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
     MOVLB 0x01 ;Select bank 1
     MOVLW (V_FRONT_PORCH - 1)
     MOVWF ((v_counter) and 07Fh)
 
+    v_early_front_porch:
+    ;16 Instruction padding
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    v_early_sync_pulse_setup:
+    ;7 Instruction padding
+    NOP
+    NOP
+    NOP
+    v_early_back_porch_setup:
+    ;4 Instruction padding
+    NOP
+    NOP
+    NOP
+    NOP
+
 
     ;-------END OF FIRST VBLANK LINE---------;
 
-    horizontal_line:
+    v_front_porch:
     ;4 instruction front porch
     MOVLB 0x00 ;Select bank 1
     NOP
@@ -6657,17 +6665,41 @@ vblank:
     NOP
     NOP
     NOP
+
+    ;-----------140 instructions
+    MOVLB 0x01
+    DECFSZ ((v_counter) and 07Fh)
+    GOTO v_early_front_porch
+
+    BTFSS ((v_state) and 07Fh), 0
+    ;MOVLW V_SYNC_PULSE
+    ;MOVLW V_BACK_PORCH
+    GOTO v_sync_pulse_setup
+    GOTO v_back_porch_setup
+
+    v_sync_pulse_setup:
+    BSF ((v_state) and 07Fh), 0
+    MOVLW V_SYNC_PULSE
+    MOVWF ((v_counter) and 07Fh)
+    MOVLB 0x00
+    BCF ((LATC) and 07Fh), 7
+    GOTO v_early_sync_pulse_setup
+
+    v_back_porch_setup:
+    ;Here after 7 cycles
+    BTFSC ((v_state) and 07Fh), 1
+    GOTO finish_vsync
+
+    BSF ((v_state) and 07Fh), 1
+    MOVLW V_BACK_PORCH
+    MOVWF ((v_counter) and 07Fh)
+    MOVLB 0x00
+    BSF ((LATC) and 07Fh), 7
+    GOTO v_early_back_porch_setup
+
+    finish_vsync:
     NOP
     NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    ;-----------150 instructions
     NOP
     NOP
     NOP
@@ -6675,14 +6707,13 @@ vblank:
     NOP
     NOP
     MOVLB 0x01
-    DECFSZ ((v_counter) and 07Fh)
-    GOTO horizontal_line
-    NOP
+    CLRF ((v_state) and 07Fh)
+
     ;-----------160 instructions
 
 
 
-    NOP
+    MOVLB 0x00
     GOTO frame
 
     RETURN

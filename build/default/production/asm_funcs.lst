@@ -1,7 +1,7 @@
 
 
 Microchip MPLAB XC8 Assembler V3.10 build 20250813170317 
-                                                                                                           Thu Jul  2 01:46:02 2026
+                                                                                                           Sun Jul  5 18:50:13 2026
 
 
      1                           	processor	16F15244
@@ -6021,7 +6021,7 @@ Microchip MPLAB XC8 Assembler V3.10 build 20250813170317
 
 
 Microchip Technology PIC Macro Assembler V3.10 build 20250813170317 
-Symbol Table                                                                                               Thu Jul  2 01:46:02 2026
+Symbol Table                                                                                               Sun Jul  5 18:50:13 2026
 
                             LATC 001A                             FSR1H 0007                             FSR1L 0006  
                            frame 059A                      finish_vsync 07F0             shorter_continue_sync 05B9  

@@ -1,7 +1,7 @@
 
 
 Microchip MPLAB XC8 Assembler V3.10 build 20250813170317 
-                                                                                               Thu Jul  2 01:46:03 2026
+                                                                                               Sun Jul  5 23:24:05 2026
 
 Microchip MPLAB XC8 C Compiler v3.10 (Free license) build 20250813170317 Og1 
      1                           	processor	16F15244
@@ -292,13 +292,13 @@ Microchip MPLAB XC8 C Compiler v3.10 (Free license) build 20250813170317 Og1
    286 ;;
    287 ;; *************** function _main *****************
    288 ;; Defined at:
-   289 ;;		line 52 in file "vga_test_full_signal.c"
+   289 ;;		line 79 in file "vga_test_full_signal.c"
    290 ;; Parameters:    Size  Location     Type
    291 ;;		None
    292 ;; Auto vars:     Size  Location     Type
    293 ;;		None
    294 ;; Return value:  Size  Location     Type
-   295 ;;                  2   24[None  ] int 
+   295 ;;                  2   38[None  ] int 
    296 ;; Registers used:
    297 ;;		wreg, fsr0l, fsr0h, fsr1l, fsr1h, fsr1l, fsr1h, status,2, status,0, pclath, cstack
    298 ;; Tracked objects:
@@ -323,23 +323,23 @@ Microchip MPLAB XC8 C Compiler v3.10 (Free license) build 20250813170317 Og1
    317     0577                     _main:	
    318                           ;psect for function _main
    319                           
-   320     0577                     l528:	
+   320     0577                     l578:	
    321                           ;incstack = 0
    322                           ; Regs used in _main: [allreg]
    323                           
    324                           
-   325                           ;vga_test_full_signal.c: 53:     ANSELA = 0x00;
+   325                           ;vga_test_full_signal.c: 80:     ANSELA = 0x00;
    326     0577  017E               	movlb	62	; select bank62
    327     0578  01B8               	clrf	56	;volatile
    328                           
-   329                           ;vga_test_full_signal.c: 54:     ANSELB = 0x00;
+   329                           ;vga_test_full_signal.c: 81:     ANSELB = 0x00;
    330     0579  01C3               	clrf	67	;volatile
    331                           
-   332                           ;vga_test_full_signal.c: 55:     ANSELC = 0x00;
+   332                           ;vga_test_full_signal.c: 82:     ANSELC = 0x00;
    333     057A  01CE               	clrf	78	;volatile
-   334     057B                     l530:
+   334     057B                     l580:
    335                           
-   336                           ;vga_test_full_signal.c: 57:     fillLineBuffer(line_buffer, 80);
+   336                           ;vga_test_full_signal.c: 84:     fillLineBuffer(line_buffer, 80);
    337     057B  3020               	movlw	low _line_buffer
    338     057C  00F0               	movwf	fillLineBuffer@line
    339     057D  3000               	movlw	high _line_buffer
@@ -347,24 +347,24 @@ Microchip MPLAB XC8 C Compiler v3.10 (Free license) build 20250813170317 Og1
    341     057F  3050               	movlw	80
    342     0580  00F2               	movwf	fillLineBuffer@size
    343     0581  3185  2562  3185   	fcall	_fillLineBuffer
-   344     0584                     l532:
+   344     0584                     l582:
    345                           
-   346                           ;vga_test_full_signal.c: 59:     TRISC = 0;
+   346                           ;vga_test_full_signal.c: 86:     TRISC = 0;
    347     0584  0140               	movlb	0	; select bank0
    348     0585  0194               	clrf	20	;volatile
-   349     0586                     l534:
+   349     0586                     l584:
    350                           
-   351                           ;vga_test_full_signal.c: 60:     LATC = 0;
+   351                           ;vga_test_full_signal.c: 87:     LATC = 0;
    352     0586  019A               	clrf	26	;volatile
-   353     0587                     l536:
+   353     0587                     l586:
    354                           
-   355                           ;vga_test_full_signal.c: 63:         drawLine(line_buffer);
+   355                           ;vga_test_full_signal.c: 90:         drawLine(line_buffer);
    356     0587  3020               	movlw	low _line_buffer
    357     0588  00F0               	movwf	_drawLine$0
    358     0589  3000               	movlw	high _line_buffer
    359     058A  00F1               	movwf	_drawLine$0+1
    360     058B  3185  2591  3185   	fcall	_drawLine
-   361     058E  2D87               	goto	l536
+   361     058E  2D87               	goto	l586
    362     058F  3180  2802         	ljmp	start
    363     0591                     __end_of_main:
    364                           
@@ -372,7 +372,7 @@ Microchip MPLAB XC8 C Compiler v3.10 (Free license) build 20250813170317 Og1
    366     0562                     __ptext1:	
    367 ;; *************** function _fillLineBuffer *****************
    368 ;; Defined at:
-   369 ;;		line 43 in file "vga_test_full_signal.c"
+   369 ;;		line 69 in file "vga_test_full_signal.c"
    370 ;; Parameters:    Size  Location     Type
    371 ;;  line            2    0[COMMON] PTR unsigned char 
    372 ;;		 -> line_buffer(0), 
@@ -404,17 +404,17 @@ Microchip MPLAB XC8 C Compiler v3.10 (Free license) build 20250813170317 Og1
    398     0562                     _fillLineBuffer:	
    399                           ;psect for function _fillLineBuffer
    400                           
-   401     0562                     l520:	
+   401     0562                     l570:	
    402                           ;incstack = 0
    403                           ; Regs used in _fillLineBuffer: [wreg+fsr1l+fsr1h+status,2+status,0]
    404                           
    405                           
-   406                           ;vga_test_full_signal.c: 44:     for (uint8_t i = 0; i < size; i++) {
+   406                           ;vga_test_full_signal.c: 70:     for (uint8_t i = 0; i < size; i++) {
    407     0562  01F3               	clrf	fillLineBuffer@i
-   408     0563  2D70               	goto	l526
-   409     0564                     l522:
+   408     0563  2D70               	goto	l576
+   409     0564                     l572:
    410                           
-   411                           ;vga_test_full_signal.c: 45:         line[i] = (i%64) + 64 + 128;
+   411                           ;vga_test_full_signal.c: 71:         line[i] = (i%64) + 64 + 128;
    412     0564  0873               	movf	fillLineBuffer@i,w
    413     0565  0770               	addwf	fillLineBuffer@line,w
    414     0566  0086               	movwf	6
@@ -425,21 +425,21 @@ Microchip MPLAB XC8 C Compiler v3.10 (Free license) build 20250813170317 Og1
    419     056B  393F               	andlw	63
    420     056C  3EC0               	addlw	192
    421     056D  0081               	movwf	1
-   422     056E                     l524:
+   422     056E                     l574:
    423                           
-   424                           ;vga_test_full_signal.c: 47:     }
+   424                           ;vga_test_full_signal.c: 74:     }
    425     056E  3001               	movlw	1
    426     056F  07F3               	addwf	fillLineBuffer@i,f
-   427     0570                     l526:
+   427     0570                     l576:
    428     0570  0872               	movf	fillLineBuffer@size,w
    429     0571  0273               	subwf	fillLineBuffer@i,w
    430     0572  1C03               	skipc
    431     0573  2D75               	goto	u21
    432     0574  2D76               	goto	u20
    433     0575                     u21:
-   434     0575  2D64               	goto	l522
+   434     0575  2D64               	goto	l572
    435     0576                     u20:
-   436     0576                     l20:
+   436     0576                     l34:
    437     0576  0008               	return
    438     0577                     __end_of_fillLineBuffer:
    439     0001                     ___latbits      equ	1
@@ -619,12 +619,12 @@ DATA                 0      0       4      0.0%
 
 
 Microchip Technology PIC Macro Assembler V3.10 build 20250813170317 
-Symbol Table                                                                                   Thu Jul  2 01:46:03 2026
+Symbol Table                                                                                   Sun Jul  5 23:24:05 2026
 
-                     l20 0576                       u20 0576                       u21 0575  
-                    l520 0562                      l522 0564                      l530 057B  
-                    l524 056E                      l532 0584                      l526 0570  
-                    l534 0586                      l536 0587                      l528 0577  
+                     l34 0576                       u20 0576                       u21 0575  
+                    l570 0562                      l572 0564                      l580 057B  
+                    l574 056E                      l582 0584                      l576 0570  
+                    l584 0586                      l586 0587                      l578 0577  
        ??_fillLineBuffer 0073                     _LATC 001A                     _main 0577  
                    indf1 0001                     fsr1l 0006                     btemp 007E  
                    start 0002                    ?_main 0070                    _TRISC 0014  

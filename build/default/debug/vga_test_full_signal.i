@@ -6225,10 +6225,46 @@ extern __bank0 __bit __timeout;
 
 extern void drawLine(uint8_t *buf);
 
+uint8_t hsv_to_rgb(uint8_t h) {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+
+    h %= 24;
+
+    if (h < 4) {
+        r = 3;
+        g = (h % 4);
+    }
+    else if (h < 8) {
+        g = 3;
+        r = 3 - (h % 4);
+    }
+    else if (h < 12) {
+        g = 3;
+        b = (h % 4);
+    }
+    else if (h < 16) {
+        b = 3;
+        g = 3 - (h % 4);
+    }
+    else if (h < 20) {
+        b = 3;
+        r = (h % 4);
+    }
+    else if (h < 24) {
+        r = 3;
+        b = 3 - (h % 4);
+    }
+
+    return (uint8_t)(r+g+b);
+}
+
 void fillLineBuffer(uint8_t line[], uint8_t size) {
     for (uint8_t i = 0; i < size; i++) {
-        line[i] = (i%64) + 64 + 128;
 
+
+        line[i] = hsv_to_rgb(i) + 64 + 128;
     }
 }
 

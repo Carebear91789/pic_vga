@@ -3,6 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
+            <name>vga_static_bars</name>
             <name>vga_test_full_signal</name>
             <name>vga_test</name>
             <creation-uuid>2b3182db-aad5-47ba-a0a1-f1991404f258</creation-uuid>
